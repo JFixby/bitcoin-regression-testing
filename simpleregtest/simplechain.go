@@ -7,6 +7,7 @@ package simpleregtest
 import (
 	"fmt"
 	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/cointest"
 	"github.com/jfixby/pin"
 	"path/filepath"
 
@@ -35,7 +36,7 @@ type ChainWithMatureOutputsSpawner struct {
 
 	ActiveNet *chaincfg.Params
 
-	NetPortManager harness.NetPortManager
+	NetPortManager cointest.NetPortManager
 
 	NodeStartExtraArguments   map[string]interface{}
 	WalletStartExtraArguments map[string]interface{}
