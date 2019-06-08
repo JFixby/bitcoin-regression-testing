@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"flag"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"os"
 	"testing"
@@ -14,9 +14,9 @@ import (
 )
 
 // ObtainHarness manages access to the Pool for test cases
-func ObtainHarness(tag string) *harness.Harness {
+func ObtainHarness(tag string) *coinharness.Harness {
 	s := testSetup.harnessPool.ObtainSpawnableConcurrentSafe(tag)
-	return s.(*harness.Harness)
+	return s.(*coinharness.Harness)
 }
 
 var testSetup *SimpleTestSetup
