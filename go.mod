@@ -1,4 +1,4 @@
-module github.com/jfixby/dcrregtest
+module github.com/jfixby/btcregtest
 
 go 1.12
 

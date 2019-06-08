@@ -1,16 +1,11 @@
-// Copyright (c) 2018 The btcsuite developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
-
 package btcregtest
 
 import (
 	"github.com/jfixby/coinharness"
 	"testing"
-
 )
 
-func TestConnectNode(t *testing.T) {
+func TestP2PConnect(t *testing.T) {
 	// Skip tests when running with -short
 	//if testing.Short() {
 	//	t.Skip("Skipping RPC harness tests in short mode")
@@ -18,8 +13,8 @@ func TestConnectNode(t *testing.T) {
 	r := ObtainHarness(mainHarnessName)
 
 	// Create a fresh test harness.
-	harness := testSetup.Regnet0.NewInstance(t.Name()).(*coinharness.Harness)
-	defer testSetup.Regnet0.Dispose(harness)
+	harness := testSetup.Regnet25.NewInstance("TestP2PConnect").(*coinharness.Harness)
+	defer testSetup.Regnet25.Dispose(harness)
 
 	// Establish a p2p connection from our new local harness to the main
 	// harness.
