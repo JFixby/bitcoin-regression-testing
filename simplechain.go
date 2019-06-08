@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"path/filepath"
 
@@ -30,8 +30,8 @@ type ChainWithMatureOutputsSpawner struct {
 	// NumMatureOutputs sets requirement for the generated test chain
 	NumMatureOutputs uint32
 
-	NodeFactory   harness.TestNodeFactory
-	WalletFactory harness.TestWalletFactory
+	NodeFactory   coinharness.TestNodeFactory
+	WalletFactory coinharness.TestWalletFactory
 
 	ActiveNet *chaincfg.Params
 
@@ -50,7 +50,7 @@ type ChainWithMatureOutputsSpawner struct {
 //      balance.
 func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) pin.Spawnable {
 	harnessFolderName := "harness-" + harnessName
-	pin.AssertNotNil("NodeFactory", testSetup.NodeFactory)
+	pin.AssertNotNil("ConsoleNodeFactory", testSetup.NodeFactory)
 	pin.AssertNotNil("ActiveNet", testSetup.ActiveNet)
 	pin.AssertNotNil("WalletFactory", testSetup.WalletFactory)
 
@@ -67,7 +67,7 @@ func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) 
 
 	localhost := "127.0.0.1"
 
-	nodeConfig := &harness.TestNodeConfig{
+	nodeConfig := &coinharness.TestNodeConfig{
 		P2PHost: localhost,
 		P2PPort: p2p,
 
@@ -86,7 +86,7 @@ func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) 
 		ActiveNet:     testSetup.ActiveNet,
 	}
 
-	harness := &harness.Harness{
+	harness := &coinharness.Harness{
 		Name:       harnessName,
 		Node:       testSetup.NodeFactory.NewNode(nodeConfig),
 		Wallet:     testSetup.WalletFactory.NewWallet(walletConfig),
@@ -109,7 +109,7 @@ func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) 
 // Dispose harness. This includes removing
 // all temporary directories, and shutting down any created processes.
 func (testSetup *ChainWithMatureOutputsSpawner) Dispose(s pin.Spawnable) error {
-	h := s.(*harness.Harness)
+	h := s.(*coinharness.Harness)
 	if h == nil {
 		return nil
 	}
