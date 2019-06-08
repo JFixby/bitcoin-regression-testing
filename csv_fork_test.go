@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"bytes"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/coinharness"
 	"runtime"
 	"strings"
 	"testing"
@@ -26,7 +26,7 @@ const (
 
 // makeTestOutput creates an on-chain output paying to a freshly generated
 // p2pkh output with the specified amount.
-func makeTestOutput(r *harness.Harness, t *testing.T,
+func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	amt btcutil.Amount) (*btcec.PrivateKey, *wire.OutPoint, []byte, error) {
 
 	// Create a fresh key, then send some coins to an address spendable by
@@ -286,7 +286,7 @@ func TestBIP0113Activation(t *testing.T) {
 
 // createCSVOutput creates an output paying to a trivially redeemable CSV
 // pkScript with the specified time-lock.
-func createCSVOutput(r *harness.Harness, t *testing.T,
+func createCSVOutput(r *coinharness.Harness, t *testing.T,
 	numSatoshis btcutil.Amount, timeLock int32,
 	isSeconds bool) ([]byte, *wire.OutPoint, *wire.MsgTx, error) {
 
@@ -374,7 +374,7 @@ func spendCSVOutput(redeemScript []byte, csvUTXO *wire.OutPoint,
 
 // assertTxInBlock asserts a transaction with the specified txid is found
 // within the block with the passed block hash.
-func assertTxInBlock(r *harness.Harness, t *testing.T, blockHash *chainhash.Hash,
+func assertTxInBlock(r *coinharness.Harness, t *testing.T, blockHash *chainhash.Hash,
 	txid *chainhash.Hash) {
 
 	block, err := r.NodeRPCClient().GetBlock(blockHash)

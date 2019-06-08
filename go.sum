@@ -1,4 +1,3 @@
-github.com/aead/siphash v0.0.0-20170329201724-e404fcfc8885 h1:bBmEG9/q1xH07CqeeFw1ejup6Kw+/88WhhLHqIJ0ngQ=
 github.com/aead/siphash v0.0.0-20170329201724-e404fcfc8885/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/aead/siphash v1.0.1 h1:FwHfE/T45KPKYuuSAKyyvE+oPWcaQ+CUmFW0bPlM+kg=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
@@ -14,6 +13,7 @@ github.com/btcsuite/goleveldb v0.0.0-20160330041536-7834afc9e8cd/go.mod h1:F+uVa
 github.com/btcsuite/goleveldb v1.0.0/go.mod h1:QiK9vBlgftBg6rWQIj6wFzbPfRjiykIEhBH4obrXJ/I=
 github.com/btcsuite/snappy-go v0.0.0-20151229074030-0bdef8d06723/go.mod h1:8woku9dyThutzjeg+3xrA5iCpBRH8XEEg3lh6TiUghc=
 github.com/btcsuite/snappy-go v1.0.0/go.mod h1:8woku9dyThutzjeg+3xrA5iCpBRH8XEEg3lh6TiUghc=
+github.com/btcsuite/websocket v0.0.0-20150119174127-31079b680792 h1:R8vQdOQdZ9Y3SkEwmHoWBmX1DNXhXZqlTpq6s4tyJGc=
 github.com/btcsuite/websocket v0.0.0-20150119174127-31079b680792/go.mod h1:ghJtEyQwv5/p4Mg4C0fgbePVuGr935/5ddU9Z3TmDRY=
 github.com/btcsuite/winsvc v1.0.0/go.mod h1:jsenWakMcC0zFBFurPLEAyrnc/teJEM1O46fmI40EZs=
 github.com/davecgh/go-spew v0.0.0-20171005155431-ecdeabc65495/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -73,9 +73,8 @@ github.com/gorilla/websocket v1.2.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoA
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
-github.com/jfixby/bitcoin-regression-testing v0.0.0-20190608150931-436f32d77d44 h1:02/PMT0/hvNC4yHVYfCMrH/ihuYHLFYxCoggruxnz2Y=
-github.com/jfixby/coinharness v0.0.0-20190607171513-5f46cbbbe413 h1:5UBGtAxdMgbpyD80O5amVsxlP0+v5aWSqukkYrY5pHQ=
-github.com/jfixby/coinharness v0.0.0-20190607171513-5f46cbbbe413/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
+github.com/jfixby/coinharness v0.0.0-20190608145703-f76f4622e30d h1:sPFlK/1Xww1pImmDS7ZEtZgBRFAQ9ypOzsEWrCzP23c=
+github.com/jfixby/coinharness v0.0.0-20190608145703-f76f4622e30d/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
 github.com/jfixby/dcrharness v0.0.0-20190607171832-4e914d242661 h1:5f4fResF7YwwlbUe/kUn49/H3wPW19p5gBGg9JTndo0=
 github.com/jfixby/dcrharness v0.0.0-20190607171832-4e914d242661/go.mod h1:i7Ix4FufvsFX+9dMIBsCNuQfRWrbv+UGT4XbW3/5DKQ=
 github.com/jfixby/pin v0.0.0-20190604132358-d174b38abe5c h1:CkNhDtxdLvI+VyDS1ZLE9M9jGz2wwa0yP5FHw9Z+n/k=

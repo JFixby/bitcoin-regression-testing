@@ -5,7 +5,6 @@
 package btcregtest
 
 import (
-	"github.com/jfixby/bitcoin-regression-testing/harness"
 	"testing"
 	"time"
 

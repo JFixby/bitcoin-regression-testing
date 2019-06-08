@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/coinharness"
 	"runtime"
 	"testing"
 	"time"
@@ -29,7 +29,7 @@ const (
 // assertVersionBit gets the passed block hash from the given test harness and
 // ensures its version either has the provided bit set or unset per the set
 // flag.
-func assertVersionBit(r *harness.Harness, t *testing.T, hash *chainhash.Hash, bit uint8, set bool) {
+func assertVersionBit(r *coinharness.Harness, t *testing.T, hash *chainhash.Hash, bit uint8, set bool) {
 	block, err := r.NodeRPCClient().GetBlock(hash)
 	if err != nil {
 		t.Fatalf("failed to retrieve block %v: %v", hash, err)
@@ -49,7 +49,7 @@ func assertVersionBit(r *harness.Harness, t *testing.T, hash *chainhash.Hash, bi
 
 // assertChainHeight retrieves the current chain height from the given test
 // harness and ensures it matches the provided expected height.
-func assertChainHeight(r *harness.Harness, t *testing.T, expectedHeight uint32) {
+func assertChainHeight(r *coinharness.Harness, t *testing.T, expectedHeight uint32) {
 	height, err := r.NodeRPCClient().GetBlockCount()
 	if err != nil {
 		t.Fatalf("failed to retrieve block height: %v", err)
@@ -83,7 +83,7 @@ func thresholdStateToStatus(state blockchain.ThresholdState) (string, error) {
 // assertSoftForkStatus retrieves the current blockchain info from the given
 // test harness and ensures the provided soft fork key is both available and its
 // status is the equivalent of the passed state.
-func assertSoftForkStatus(r *harness.Harness, t *testing.T, forkKey string, state blockchain.ThresholdState) {
+func assertSoftForkStatus(r *coinharness.Harness, t *testing.T, forkKey string, state blockchain.ThresholdState) {
 	// Convert the expected threshold state into the equivalent
 	// getblockchaininfo RPC status string.
 	status, err := thresholdStateToStatus(state)
@@ -126,7 +126,7 @@ func assertSoftForkStatus(r *harness.Harness, t *testing.T, forkKey string, stat
 // specific soft fork deployment to test.
 func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	// Initialize the primary mining node with only the genesis block.
-	r := testSetup.Simnet0.NewInstance("harness-" + forkKey).(*harness.Harness)
+	r := testSetup.Simnet0.NewInstance("harness-" + forkKey).(*coinharness.Harness)
 	defer testSetup.Simnet0.Dispose(r)
 	// *** ThresholdDefined ***
 	//
@@ -151,7 +151,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	// still defined and did NOT move to started.
 	confirmationWindow := r.Node.Network().MinerConfirmationWindow
 	for i := uint32(0); i < confirmationWindow-2; i++ {
-		args := harness.GenerateBlockArgs{
+		args := coinharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
 		}
@@ -169,7 +169,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	//
 	// Assert the chain height is the expected value and the soft fork
 	// status is started.
-	args := harness.GenerateBlockArgs{
+	args := coinharness.GenerateBlockArgs{
 		BlockVersion: vbLegacyBlockVersion,
 		BlockTime:    time.Time{},
 	}
@@ -196,7 +196,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	activationThreshold := net.RuleChangeActivationThreshold
 	signalForkVersion := int32(1<<deployment.BitNumber) | vbTopBits
 	for i := uint32(0); i < activationThreshold-1; i++ {
-		args := harness.GenerateBlockArgs{
+		args := coinharness.GenerateBlockArgs{
 			BlockVersion: signalForkVersion,
 			BlockTime:    time.Time{},
 		}
@@ -206,7 +206,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		}
 	}
 	for i := uint32(0); i < confirmationWindow-(activationThreshold-1); i++ {
-		args := harness.GenerateBlockArgs{
+		args := coinharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
 		}
