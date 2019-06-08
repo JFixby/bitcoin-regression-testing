@@ -5,7 +5,7 @@
 package btcregtest
 
 import (
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/jfixby/coinharness"
 	"testing"
 
 	"github.com/btcsuite/btcutil"
@@ -13,14 +13,14 @@ import (
 
 func TestMemWalletReorg(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC h tests in short mode")
-	}
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC h tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 
 	// Create a fresh h, we'll be using the main h to force a
 	// re-org on this local h.
-	h := testSetup.Regnet5.NewInstance(t.Name() + ".4").(*harness.Harness)
+	h := testSetup.Regnet5.NewInstance(t.Name() + ".4").(*coinharness.Harness)
 	defer testSetup.Regnet5.Dispose(h)
 	h.Wallet.Sync()
 
@@ -37,7 +37,7 @@ func TestMemWalletReorg(t *testing.T) {
 	if err := ConnectNode(h, r); err != nil {
 		t.Fatalf("unable to connect harnesses: %v", err)
 	}
-	nodeSlice := []*harness.Harness{r, h}
+	nodeSlice := []*coinharness.Harness{r, h}
 	if err := JoinNodes(nodeSlice, Blocks); err != nil {
 		t.Fatalf("unable to join node on blocks: %v", err)
 	}
