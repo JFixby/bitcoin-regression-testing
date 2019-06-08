@@ -12,13 +12,13 @@ import (
 
 func TestConnectNode(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC harness tests in short mode")
-	}
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC harness tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 
 	// Create a fresh test harness.
-	harness := testSetup.Regnet0.NewInstance(t.Name()).(*harness.Harness)
+	harness := testSetup.Regnet0.NewInstance(t.Name()).(*coinharness.Harness)
 	defer testSetup.Regnet0.Dispose(harness)
 
 	// Establish a p2p connection from our new local harness to the main
