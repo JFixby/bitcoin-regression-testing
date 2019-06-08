@@ -10,22 +10,22 @@ import (
 
 func TestGetBlockCount(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC harness tests in short mode")
-	}
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC harness tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 	// Save the current count.
-	currentCount, err := r.NodeRPCClient().GetBlockCount()
+	currentCount, err := r.NodeRPCClient().(*rpcclient.Client).GetBlockCount()
 	if err != nil {
 		t.Fatalf("Unable to get block count: %v", err)
 	}
 
-	if _, err := r.NodeRPCClient().Generate(1); err != nil {
+	if _, err := r.NodeRPCClient().(*rpcclient.Client).Generate(1); err != nil {
 		t.Fatalf("Unable to generate block: %v", err)
 	}
 
 	// Count should have increased by one.
-	newCount, err := r.NodeRPCClient().GetBlockCount()
+	newCount, err := r.NodeRPCClient().(*rpcclient.Client).GetBlockCount()
 	if err != nil {
 		t.Fatalf("Unable to get block count: %v", err)
 	}
