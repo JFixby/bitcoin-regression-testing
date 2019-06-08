@@ -34,8 +34,8 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 	}
 	outputAmt := btcutil.Amount(50 * btcutil.SatoshiPerBitcoin)
 	output := wire.NewTxOut(int64(outputAmt), pkScript)
-	ctargs := &harness.CreateTransactionArgs{
-		Outputs: []*wire.TxOut{output},
+	ctargs := &coinharness.CreateTransactionArgs{
+		Outputs: []coinharness.OutputTx{output},
 		FeeRate: 10,
 		Change:  true,
 	}
