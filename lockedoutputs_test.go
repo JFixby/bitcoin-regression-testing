@@ -5,7 +5,8 @@
 package btcregtest
 
 import (
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/btcsuite/btcutil"
+	"github.com/jfixby/coinharness"
 	"testing"
 
 	"github.com/btcsuite/btcd/txscript"
@@ -15,12 +16,12 @@ import (
 
 func TestMemWalletLockedOutputs(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC h tests in short mode")
-	}
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC h tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 	// Obtain the initial balance of the wallet at this point.
-	startingBalance := r.Wallet.ConfirmedBalance()
+	startingBalance := r.Wallet.ConfirmedBalance().(btcutil.Amount)
 
 	// First, create a signed transaction spending some outputs.
 	addr, err := r.Wallet.NewAddress(nil)
@@ -45,7 +46,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 
 	// The current wallet balance should now be at least 50 BTC less
 	// (accounting for fees) than the period balance
-	currentBalance := r.Wallet.ConfirmedBalance()
+	currentBalance := r.Wallet.ConfirmedBalance().(btcutil.Amount)
 	if !(currentBalance <= startingBalance-outputAmt) {
 		t.Fatalf("spent outputs not locked: previous balance %v, "+
 			"current balance %v", startingBalance, currentBalance)
@@ -54,8 +55,13 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 	// Now unlocked all the spent inputs within the unbroadcast signed
 	// transaction. The current balance should now be exactly that of the
 	// starting balance.
-	r.Wallet.UnlockOutputs(tx.TxIn)
-	currentBalance = r.Wallet.ConfirmedBalance()
+	txin := tx.(*wire.MsgTx).TxIn
+	inpts := make([]coinharness.InputTx, len(txin))
+	for i, j := range txin {
+		inpts[i] = j
+	}
+	r.Wallet.UnlockOutputs(inpts)
+	currentBalance = r.Wallet.ConfirmedBalance().(btcutil.Amount)
 	if currentBalance != startingBalance {
 		t.Fatalf("current and starting balance should now match: "+
 			"expected %v, got %v", startingBalance, currentBalance)
