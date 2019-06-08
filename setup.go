@@ -2,13 +2,12 @@
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
-package simpleregtest
+package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
-	"github.com/jfixby/bitcoin-regression-testing/memwallet"
-	"github.com/jfixby/bitcoin-regression-testing/testnode"
+	"github.com/jfixby/btcregtest/memwallet"
+	"github.com/jfixby/btcregtest/testnode"
 	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/commandline"
 	"github.com/jfixby/pin/gobuilder"
@@ -58,16 +57,13 @@ type SimpleTestSetup struct {
 	Simnet0 *ChainWithMatureOutputsSpawner
 
 	// NodeFactory produces a new TestNode instance upon request
-	NodeFactory harness.TestNodeFactory
+	NodeFactory coinharness.TestNodeFactory
 
 	// WalletFactory produces a new TestWallet instance upon request
-	WalletFactory harness.TestWalletFactory
+	WalletFactory coinharness.TestWalletFactory
 
 	// WorkingDir defines test setup working dir
 	WorkingDir *pin.TempDirHandler
-
-	// nodeGoBuilder builds test node Go-code for the tests
-	nodeGoBuilder *gobuilder.GoBuider
 }
 
 // TearDown all harnesses in test Pool.
@@ -75,7 +71,6 @@ type SimpleTestSetup struct {
 // and shutting down any created processes.
 func (setup *SimpleTestSetup) TearDown() {
 	setup.harnessPool.DisposeAll()
-	setup.nodeGoBuilder.Dispose()
 	setup.WorkingDir.Dispose()
 }
 
@@ -87,13 +82,11 @@ func Setup() *SimpleTestSetup {
 		WorkingDir: pin.NewTempDir(setupWorkingDir(), "simpleregtest").MakeDir(),
 	}
 
-	nodeProjectGoPath := findBTCDFolder()
+	btcdEXE := &commandline.ExplicitExecutablePathString{PathString: "../../../btcsuite/btcd/btcd.exe"}
 
-	setup.nodeGoBuilder = setupBuild("btcd", setup.WorkingDir.Path(), nodeProjectGoPath)
 	setup.NodeFactory = &testnode.NodeFactory{
-		NodeExecutablePathProvider: setup.nodeGoBuilder,
+		NodeExecutablePathProvider: btcdEXE,
 	}
-	setup.nodeGoBuilder.Build()
 
 	portManager := &LazyPortManager{
 		BasePort: 20000,
