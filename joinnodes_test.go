@@ -5,7 +5,8 @@
 package btcregtest
 
 import (
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/decred/dcrd/dcrutil"
+	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
 
@@ -27,10 +28,10 @@ func checkJoinBlocks(t *testing.T) {
 
 	// Create a second harness with only the genesis block so it is behind
 	// the main harness.
-	h := testSetup.Regnet0.NewInstance("checkJoinBlocks").(*harness.Harness)
+	h := testSetup.Regnet0.NewInstance("checkJoinBlocks").(*coinharness.Harness)
 	defer testSetup.Regnet0.Dispose(h)
 
-	nodeSlice := []*harness.Harness{r, h}
+	nodeSlice := []*coinharness.Harness{r, h}
 	blocksSynced := make(chan struct{})
 	go func() {
 		if err := JoinNodes(nodeSlice, Blocks); err != nil {
@@ -68,9 +69,9 @@ func checkJoinBlocks(t *testing.T) {
 // TestJoinMempools must be executed after the TestJoinBlocks
 func checkJoinMempools(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC harness tests in short mode")
-	}
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC harness tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 
 	// Assert main test harness has no transactions in its mempool.
@@ -86,10 +87,10 @@ func checkJoinMempools(t *testing.T) {
 	// will be synced below so the same transaction can be sent to both
 	// nodes without it being an orphan.
 	// Create a fresh test harness.
-	h := testSetup.Regnet0.NewInstance("checkJoinMempools").(*harness.Harness)
+	h := testSetup.Regnet0.NewInstance("checkJoinMempools").(*coinharness.Harness)
 	defer testSetup.Regnet0.Dispose(h)
 
-	nodeSlice := []*harness.Harness{r, h}
+	nodeSlice := []*coinharness.Harness{r, h}
 
 	// Both mempools should be considered synced as they are empty.
 	// Therefore, this should return instantly.
@@ -105,8 +106,8 @@ func checkJoinMempools(t *testing.T) {
 		t.Fatalf("unable to generate pkscript to addr: %v", err)
 	}
 	output := wire.NewTxOut(5e8, addrScript)
-	ctargs := &harness.CreateTransactionArgs{
-		Outputs: []*wire.TxOut{output},
+	ctargs := &coinharness.CreateTransactionArgs{
+		Outputs: []coinharness.OutputTx{output},
 		FeeRate: 10,
 		Change:  true,
 	}
