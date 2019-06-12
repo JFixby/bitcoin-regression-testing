@@ -5,6 +5,7 @@
 package btcregtest
 
 import (
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
@@ -74,7 +75,7 @@ func checkJoinMempools(t *testing.T) {
 	r := ObtainHarness(mainHarnessName)
 
 	// Assert main test harness has no transactions in its mempool.
-	pooledHashes, err := r.NodeRPCClient().GetRawMempool()
+	pooledHashes, err := r.NodeRPCClient().(*rpcclient.Client).GetRawMempool()
 	if err != nil {
 		t.Fatalf("unable to get mempool for main test harness: %v", err)
 	}
@@ -114,7 +115,7 @@ func checkJoinMempools(t *testing.T) {
 	if err != nil {
 		t.Fatalf("coinbase spend failed: %v", err)
 	}
-	if _, err := r.NodeRPCClient().SendRawTransaction(testTx, true); err != nil {
+	if _, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx, true); err != nil {
 		t.Fatalf("send transaction failed: %v", err)
 	}
 
@@ -123,7 +124,7 @@ func checkJoinMempools(t *testing.T) {
 	harnessSynced := make(chan struct{})
 	go func() {
 		for {
-			poolHashes, err := r.NodeRPCClient().GetRawMempool()
+			poolHashes, err := r.NodeRPCClient().(*rpcclient.Client).GetRawMempool()
 			if err != nil {
 				t.Fatalf("failed to retrieve harness mempool: %v", err)
 			}

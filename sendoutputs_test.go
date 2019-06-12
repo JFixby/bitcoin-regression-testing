@@ -5,6 +5,7 @@
 package btcregtest
 
 import (
+	"github.com/btcsuite/btcd/rpcclient"
 	"testing"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -83,7 +84,7 @@ func TestSendOutputs(t *testing.T) {
 
 	// Generate a single block, the transaction the wallet created should
 	// be found in this block.
-	blockHashes, err := r.NodeRPCClient().Generate(1)
+	blockHashes, err := r.NodeRPCClient().(*rpcclient.Client).Generate(1)
 	if err != nil {
 		t.Fatalf("unable to generate single block: %v", err)
 	}
@@ -92,7 +93,7 @@ func TestSendOutputs(t *testing.T) {
 	// Next, generate a spend much greater than the block reward. This
 	// transaction should also have been mined properly.
 	txid = genSpend(btcutil.Amount(500 * btcutil.SatoshiPerBitcoin))
-	blockHashes, err = r.NodeRPCClient().Generate(1)
+	blockHashes, err = r.NodeRPCClient().(*rpcclient.Client).Generate(1)
 	if err != nil {
 		t.Fatalf("unable to generate single block: %v", err)
 	}
