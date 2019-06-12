@@ -6,8 +6,9 @@ package btcregtest
 
 import (
 	"fmt"
+	"github.com/jfixby/btcharness/memwallet"
+	"github.com/jfixby/btcharness/nodecls"
 	"github.com/jfixby/coinharness"
-	"github.com/jfixby/btcregtest/testnode"
 	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/commandline"
 	"github.com/jfixby/pin/gobuilder"
@@ -85,7 +86,7 @@ func Setup() *SimpleTestSetup {
 
 	btcdEXE := &commandline.ExplicitExecutablePathString{PathString: "../../../btcsuite/btcd/btcd.exe"}
 
-	setup.NodeFactory = &testnode.NodeFactory{
+	setup.NodeFactory = &nodecls.ConsoleNodeFactory{
 		NodeExecutablePathProvider: btcdEXE,
 	}
 
@@ -104,7 +105,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegNetParams,
+		ActiveNet:         &chaincfg.RegressionNetParams,
 	}
 
 	// Deploy harness spawner with generated
@@ -117,7 +118,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegNetParams,
+		ActiveNet:         &chaincfg.RegressionNetParams,
 	}
 
 	setup.Regnet1 = &ChainWithMatureOutputsSpawner{
@@ -128,7 +129,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegNetParams,
+		ActiveNet:         &chaincfg.RegressionNetParams,
 		NodeStartExtraArguments: map[string]interface{}{
 			"rejectnonstd": commandline.NoArgumentValue,
 		},
@@ -157,7 +158,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegNetParams,
+		ActiveNet:         &chaincfg.RegressionNetParams,
 	}
 	// Deploy harness spawner with empty test chain
 	setup.Simnet0 = &ChainWithMatureOutputsSpawner{
