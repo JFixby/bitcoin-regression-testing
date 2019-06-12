@@ -53,7 +53,7 @@ func syncMempools(nodes []*coinharness.Harness) error {
 
 	for !poolsMatch {
 	retry:
-		firstPool, err := nodes[0].NodeRPCClient().GetRawMempool()
+		firstPool, err := nodes[0].NodeRPCClient().(*rpcclient.Client).GetRawMempool()
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func syncMempools(nodes []*coinharness.Harness) error {
 		// first node, then we're done. Otherwise, drop back to the top
 		// of the loop and retry after a short wait period.
 		for _, node := range nodes[1:] {
-			nodePool, err := node.NodeRPCClient().GetRawMempool()
+			nodePool, err := node.NodeRPCClient().(*rpcclient.Client).GetRawMempool()
 			if err != nil {
 				return err
 			}
