@@ -7,6 +7,6 @@ require (
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
 	github.com/jfixby/btcharness v0.0.0-20190612194240-0063b9eb1ce1
 	github.com/jfixby/coinharness v0.0.0-20190608145703-f76f4622e30d
-	github.com/jfixby/pin v0.0.0-20190604132358-d174b38abe5c
-	github.com/picfight/pfcd_builder v0.0.0-20190316212115-c65045308bbd
+	github.com/jfixby/pin v0.0.0-20190612200436-0b0f8bcc3b67
+	github.com/picfight/pfcd_builder v0.0.0-20190612200317-3b1895975735 // indirect
 )

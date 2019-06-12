@@ -23,13 +23,15 @@ github.com/jfixby/coinharness v0.0.0-20190608145703-f76f4622e30d h1:sPFlK/1Xww1p
 github.com/jfixby/coinharness v0.0.0-20190608145703-f76f4622e30d/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
 github.com/jfixby/pin v0.0.0-20190604132358-d174b38abe5c h1:CkNhDtxdLvI+VyDS1ZLE9M9jGz2wwa0yP5FHw9Z+n/k=
 github.com/jfixby/pin v0.0.0-20190604132358-d174b38abe5c/go.mod h1:fcyyZW36sY5GM2qsX/sewjJu7y5ngGKoELUbDEccDqY=
+github.com/jfixby/pin v0.0.0-20190612200436-0b0f8bcc3b67 h1:aI7xdhCdTf/RJH0gn51X626Wm/P0VEoj/y4P/sK1BWc=
+github.com/jfixby/pin v0.0.0-20190612200436-0b0f8bcc3b67/go.mod h1:fcyyZW36sY5GM2qsX/sewjJu7y5ngGKoELUbDEccDqY=
 github.com/jrick/logrotate v1.0.0/go.mod h1:LNinyqDIJnpAur+b8yyulnQw/wDuN1+BYKlTRt3OuAQ=
 github.com/kkdai/bstream v0.0.0-20161212061736-f391b8402d23/go.mod h1:J+Gs4SYgM6CZQHDETBtE9HaSEkGmuNXF86RwHhHUvq4=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
-github.com/picfight/pfcd_builder v0.0.0-20190316212115-c65045308bbd h1:UGGntT+79ZVChceKRndRvLo467+95apLolqFWrsgE8Q=
-github.com/picfight/pfcd_builder v0.0.0-20190316212115-c65045308bbd/go.mod h1:H8gNfc9nl7WVz4ExJ0/e01zfUgD2RrZ4fk/tSvsQU7Q=
+github.com/picfight/pfcd_builder v0.0.0-20190612200317-3b1895975735 h1:2mMmelzzcI96qjtFROtaKiJZ79CWLv771PqWKWXSnCI=
+github.com/picfight/pfcd_builder v0.0.0-20190612200317-3b1895975735/go.mod h1:H8gNfc9nl7WVz4ExJ0/e01zfUgD2RrZ4fk/tSvsQU7Q=
 golang.org/x/crypto v0.0.0-20170930174604-9419663f5a44 h1:9lP3x0pW80sDI6t1UMSLA4to18W7R7imwAI/sWS9S8Q=
 golang.org/x/crypto v0.0.0-20170930174604-9419663f5a44/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=

@@ -2,7 +2,7 @@ package btcregtest
 
 import (
 	"github.com/jfixby/pin"
-	"github.com/picfight/pfcd_builder/fileops"
+	"github.com/jfixby/pin/fileops"
 	"testing"
 )
 
