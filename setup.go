@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/btcregtest/memwallet"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/btcregtest/testnode"
 	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/commandline"
@@ -56,7 +56,7 @@ type SimpleTestSetup struct {
 	// with only the genesis block.
 	Simnet0 *ChainWithMatureOutputsSpawner
 
-	// NodeFactory produces a new TestNode instance upon request
+	// ConsoleNodeFactory produces a new TestNode instance upon request
 	NodeFactory coinharness.TestNodeFactory
 
 	// WalletFactory produces a new TestWallet instance upon request
@@ -71,6 +71,7 @@ type SimpleTestSetup struct {
 // and shutting down any created processes.
 func (setup *SimpleTestSetup) TearDown() {
 	setup.harnessPool.DisposeAll()
+	//setup.nodeGoBuilder.Dispose()
 	setup.WorkingDir.Dispose()
 }
 
