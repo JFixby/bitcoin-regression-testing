@@ -5,7 +5,6 @@
 package btcregtest
 
 import (
-	"github.com/decred/dcrd/dcrutil"
 	"github.com/jfixby/coinharness"
 	"testing"
 	"time"

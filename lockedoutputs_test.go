@@ -11,7 +11,6 @@ import (
 
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
 )
 
 func TestMemWalletLockedOutputs(t *testing.T) {
