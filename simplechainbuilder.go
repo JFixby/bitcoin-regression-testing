@@ -6,7 +6,8 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/bitcoin-regression-testing/harness"
+	"github.com/decred/dcrd/rpcclient"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"strconv"
 	"strings"
@@ -20,7 +21,7 @@ import (
 // 3. builds a new chain with the target number of mature outputs
 // receiving the mining reward to the test wallet
 // 4. syncs wallet to the tip of the chain
-func DeploySimpleChain(testSetup *ChainWithMatureOutputsSpawner, h *harness.Harness) {
+func DeploySimpleChain(testSetup *ChainWithMatureOutputsSpawner, h *coinharness.Harness) {
 	pin.AssertNotEmpty("harness name", h.Name)
 	fmt.Println("Deploying Harness[" + h.Name + "]")
 
@@ -62,7 +63,7 @@ func DeploySimpleChain(testSetup *ChainWithMatureOutputsSpawner, h *harness.Harn
 	{
 		if testSetup.NumMatureOutputs > 0 {
 			numToGenerate := uint32(testSetup.ActiveNet.CoinbaseMaturity) + testSetup.NumMatureOutputs
-			err := generateTestChain(numToGenerate, h.NodeRPCClient())
+			err := generateTestChain(numToGenerate, h.NodeRPCClient().(*rpcclient.Client))
 			pin.CheckTestSetupMalfunction(err)
 		}
 		// wait for the WalletTestServer to sync up to the current height
@@ -80,20 +81,19 @@ type launchArguments struct {
 }
 
 // launchHarnessSequence
-func launchHarnessSequence(h *harness.Harness, args *launchArguments) {
+func launchHarnessSequence(h *coinharness.Harness, args *launchArguments) {
 	node := h.Node
 	wallet := h.Wallet
 
-	nodeLaunchArguments := &harness.TestNodeStartArgs{
-		DebugOutput:    args.DebugNodeOutput,
-		MiningAddress:  h.MiningAddress,
-		ExtraArguments: args.NodeExtraArguments,
-	}
-	node.Start(nodeLaunchArguments)
+	node.SetDebugNodeOutput(args.DebugNodeOutput)
+	node.SetMiningAddress(h.MiningAddress)
+	node.SetExtraArguments(args.NodeExtraArguments)
+
+	node.Start()
 
 	rpcConfig := node.RPCConnectionConfig()
 
-	walletLaunchArguments := &harness.TestWalletStartArgs{
+	walletLaunchArguments := &coinharness.TestWalletStartArgs{
 		NodeRPCCertFile:          node.CertFile(),
 		DebugWalletOutput:        args.DebugWalletOutput,
 		MaxSecondsToWaitOnLaunch: 90,
@@ -104,7 +104,7 @@ func launchHarnessSequence(h *harness.Harness, args *launchArguments) {
 }
 
 // shutdownHarnessSequence reverses the launchHarnessSequence
-func shutdownHarnessSequence(harness *harness.Harness) {
+func shutdownHarnessSequence(harness *coinharness.Harness) {
 	harness.Wallet.Stop()
 	harness.Node.Stop()
 }
