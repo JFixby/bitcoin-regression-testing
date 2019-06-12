@@ -5,6 +5,7 @@
 package btcregtest
 
 import (
+	"github.com/jfixby/btcharness"
 	"testing"
 	"time"
 
@@ -34,7 +35,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 	const numTxns = 5
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
-		ctargs := &harness.CreateTransactionArgs{
+		ctargs := &btcharness.CreateTransactionArgs{
 			Outputs: []*wire.TxOut{output},
 			FeeRate: 10,
 			Change:  true,
@@ -49,7 +50,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 
 	// Now generate a block with the default block version, a zero'd out
 	// time, and a burn output.
-	newBlockArgs := harness.GenerateBlockArgs{
+	newBlockArgs := btcharness.GenerateBlockArgs{
 		Txns:         txns,
 		BlockVersion: BlockVersion,
 		BlockTime:    time.Time{},
@@ -57,7 +58,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			Value:    0,
 			PkScript: []byte{},
 		}}}
-	block, err := r.Node.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(newBlockArgs)
+	block, err := btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(newBlockArgs)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -79,7 +80,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 	// time stamp a minute after the previous block's timestamp.
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
-	newBlockArgs2 := harness.GenerateBlockArgs{
+	newBlockArgs2 := btcharness.GenerateBlockArgs{
 		Txns:         nil,
 		BlockVersion: targetBlockVersion,
 		BlockTime:    timestamp,
@@ -87,7 +88,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			Value:    0,
 			PkScript: []byte{},
 		}}}
-	block, err = r.Node.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(newBlockArgs2)
+	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(newBlockArgs2)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}

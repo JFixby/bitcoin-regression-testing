@@ -5,6 +5,7 @@
 package btcregtest
 
 import (
+	"github.com/jfixby/btcharness"
 	"testing"
 	"time"
 
@@ -38,7 +39,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	const numTxns = 5
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
-		ctargs := &harness.CreateTransactionArgs{
+		ctargs := &btcharness.CreateTransactionArgs{
 			Outputs: []*wire.TxOut{output},
 			FeeRate: 10,
 			Change:  true,
@@ -54,12 +55,12 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	// Now generate a block with the default block version, and a zero'd
 	// out time.
 
-	newBlockArgs := harness.GenerateBlockArgs{
+	newBlockArgs := btcharness.GenerateBlockArgs{
 		Txns:         txns,
 		BlockVersion: BlockVersion,
 		BlockTime:    time.Time{},
 	}
-	block, err := r.Node.GenerateAndSubmitBlock(newBlockArgs)
+	block, err := btcharness.GenerateAndSubmitBlock(newBlockArgs)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -82,11 +83,11 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	timestamp := block.MsgBlock().Header.Timestamp.Add(time.Minute)
 	targetBlockVersion := int32(1337)
 
-	newBlockArgs2 := harness.GenerateBlockArgs{
+	newBlockArgs2 := btcharness.GenerateBlockArgs{
 		BlockVersion: targetBlockVersion,
 		BlockTime:    timestamp,
 	}
-	block, err = r.Node.GenerateAndSubmitBlock(newBlockArgs2)
+	block, err = btcharness.GenerateAndSubmitBlock(newBlockArgs2)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}

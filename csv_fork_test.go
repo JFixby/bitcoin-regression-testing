@@ -179,7 +179,7 @@ func TestBIP0113Activation(t *testing.T) {
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
 		}
-		block, err := r.Node.GenerateAndSubmitBlock(args)
+		block, err := btcharness.GenerateAndSubmitBlock(args)
 		if err != nil {
 			t.Fatalf("unable to submit block: %v", err)
 		}
@@ -269,12 +269,12 @@ func TestBIP0113Activation(t *testing.T) {
 		{
 			txns := []*btcutil.Tx{btcutil.NewTx(tx)}
 
-			args := harness.GenerateBlockArgs{
+			args := btcharness.GenerateBlockArgs{
 				Txns:         txns,
 				BlockVersion: vbLegacyBlockVersion,
 				BlockTime:    time.Time{},
 			}
-			_, err := r.Node.GenerateAndSubmitBlock(args)
+			_, err := btcharness.GenerateAndSubmitBlock(args)
 			if err == nil && timeLockDelta >= 0 {
 				t.Fatal("block should be rejected due to non-final " +
 					"txn, but was accepted")
@@ -485,12 +485,12 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		// shouldn't yet be active.
 		txns := []*btcutil.Tx{btcutil.NewTx(spendingTx)}
 
-		args := harness.GenerateBlockArgs{
+		args := btcharness.GenerateBlockArgs{
 			Txns:         txns,
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
 		}
-		block, err := r.Node.GenerateAndSubmitBlock(args)
+		block, err := btcharness.GenerateAndSubmitBlock(args)
 		if err != nil {
 			t.Fatalf("unable to submit block: %v", err)
 		}
@@ -569,11 +569,11 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	}
 	for i := 0; i < relativeBlockLock; i++ {
 		timeStamp := prevBlock.Header.Timestamp.Add(time.Minute * 10)
-		args := harness.GenerateBlockArgs{
+		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    timeStamp,
 		}
-		b, err := r.Node.GenerateAndSubmitBlock(args)
+		b, err := btcharness.GenerateAndSubmitBlock(args)
 		if err != nil {
 			t.Fatalf("unable to generate block: %v", err)
 		}
@@ -691,12 +691,12 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		// with the non-final transaction. It should be rejected.
 		if !test.accept {
 			txns := []*btcutil.Tx{btcutil.NewTx(test.tx)}
-			args := harness.GenerateBlockArgs{
+			args := btcharness.GenerateBlockArgs{
 				Txns:         txns,
 				BlockVersion: vbLegacyBlockVersion,
 				BlockTime:    time.Time{},
 			}
-			_, err := r.Node.GenerateAndSubmitBlock(args)
+			_, err := btcharness.GenerateAndSubmitBlock(args)
 			if err == nil {
 				t.Fatalf("test #%d, invalid block accepted", i)
 			}
