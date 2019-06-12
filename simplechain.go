@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"fmt"
+	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"path/filepath"
@@ -79,8 +80,8 @@ func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) 
 		WorkingDir: harnessFolder,
 	}
 
-	walletConfig := &harness.TestWalletConfig{
-		Seed:          harness.NewTestSeed(seedSalt),
+	walletConfig := &coinharness.TestWalletConfig{
+		Seed:          btcharness.NewTestSeed(seedSalt),
 		WalletRPCHost: localhost,
 		WalletRPCPort: walletRPC,
 		ActiveNet:     testSetup.ActiveNet,

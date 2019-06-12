@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/decred/dcrd/rpcclient"
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"strconv"
