@@ -103,7 +103,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &chaincfg.RegNetParams,
 	}
 
 	// Deploy harness spawner with generated
@@ -116,7 +116,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &chaincfg.RegNetParams,
 	}
 
 	setup.Regnet1 = &ChainWithMatureOutputsSpawner{
@@ -127,7 +127,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &chaincfg.RegNetParams,
 		NodeStartExtraArguments: map[string]interface{}{
 			"rejectnonstd": commandline.NoArgumentValue,
 		},
@@ -156,7 +156,7 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &chaincfg.RegNetParams,
 	}
 	// Deploy harness spawner with empty test chain
 	setup.Simnet0 = &ChainWithMatureOutputsSpawner{
