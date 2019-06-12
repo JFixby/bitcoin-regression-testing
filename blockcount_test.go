@@ -5,6 +5,7 @@
 package btcregtest
 
 import (
+	"github.com/btcsuite/btcd/rpcclient"
 	"testing"
 )
 
