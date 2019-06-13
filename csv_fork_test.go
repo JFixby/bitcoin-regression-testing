@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"bytes"
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
@@ -40,7 +41,7 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 
 	// Using the key created above, generate a pkScript which it's able to
 	// spend.
-	a, err := btcutil.NewAddressPubKey(key.PubKey().SerializeCompressed(), r.Node.Network())
+	a, err := btcutil.NewAddressPubKey(key.PubKey().SerializeCompressed(), r.Node.Network().(*chaincfg.Params))
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -51,8 +52,8 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	output := &wire.TxOut{PkScript: selfAddrScript, Value: 1e8}
 
 	// Next, create and broadcast a transaction paying to the output.
-	ctargs := &harness.CreateTransactionArgs{
-		Outputs: []*wire.TxOut{output},
+	ctargs := &coinharness.CreateTransactionArgs{
+		Outputs: []coinharness.OutputTx{output},
 		FeeRate: 10,
 		Change:  true,
 	}
@@ -60,7 +61,7 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	txHash, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(fundTx, true)
+	txHash, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(fundTx.(*wire.MsgTx), true)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -77,14 +78,14 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	// generated above, this is needed in order to create a proper utxo for
 	// this output.
 	var outputIndex uint32
-	if bytes.Equal(fundTx.TxOut[0].PkScript, selfAddrScript) {
+	if bytes.Equal(fundTx.(*wire.MsgTx).TxOut[0].PkScript, selfAddrScript) {
 		outputIndex = 0
 	} else {
 		outputIndex = 1
 	}
 
 	utxo := &wire.OutPoint{
-		Hash:  fundTx.TxHash(),
+		Hash:  fundTx.(*wire.MsgTx).TxHash(),
 		Index: outputIndex,
 	}
 
@@ -127,7 +128,7 @@ func TestBIP0113Activation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to generate address: %v", err)
 	}
-	addrScript, err := txscript.PayToAddrScript(addr)
+	addrScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to generate addr script: %v", err)
 	}
@@ -178,8 +179,10 @@ func TestBIP0113Activation(t *testing.T) {
 			Txns:         txns,
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
-		block, err := btcharness.GenerateAndSubmitBlock(args)
+		block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
 			t.Fatalf("unable to submit block: %v", err)
 		}
@@ -201,7 +204,7 @@ func TestBIP0113Activation(t *testing.T) {
 	// the genesis target period, so we mine 196 blocks. This'll put us at
 	// height 299. The getblockchaininfo call checks the state for the
 	// block AFTER the current height.
-	numBlocks := (r.Node.Network().MinerConfirmationWindow * 2) - 4
+	numBlocks := (r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow * 2) - 4
 	if _, err := r.NodeRPCClient().(*rpcclient.Client).Generate(numBlocks); err != nil {
 		t.Fatalf("unable to generate blocks: %v", err)
 	}
@@ -273,8 +276,10 @@ func TestBIP0113Activation(t *testing.T) {
 				Txns:         txns,
 				BlockVersion: vbLegacyBlockVersion,
 				BlockTime:    time.Time{},
+				MiningAddress: r.MiningAddress.(btcutil.Address),
+				Network: r.Node.Network().(*chaincfg.Params),
 			}
-			_, err := btcharness.GenerateAndSubmitBlock(args)
+			_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 			if err == nil && timeLockDelta >= 0 {
 				t.Fatal("block should be rejected due to non-final " +
 					"txn, but was accepted")
@@ -309,7 +314,7 @@ func createCSVOutput(r *coinharness.Harness, t *testing.T,
 
 	// Using the script generated above, create a P2SH output which will be
 	// accepted into the mempool.
-	p2shAddr, err := btcutil.NewAddressScriptHash(csvScript, r.Node.Network())
+	p2shAddr, err := btcutil.NewAddressScriptHash(csvScript, r.Node.Network().(*chaincfg.Params))
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -324,8 +329,8 @@ func createCSVOutput(r *coinharness.Harness, t *testing.T,
 
 	// Finally create a valid transaction which creates the output crafted
 	// above.
-	ctargs := &harness.CreateTransactionArgs{
-		Outputs: []*wire.TxOut{output},
+	ctargs := &coinharness.CreateTransactionArgs{
+		Outputs: []coinharness.OutputTx{output},
 		FeeRate: 10,
 		Change:  true,
 	}
@@ -335,16 +340,16 @@ func createCSVOutput(r *coinharness.Harness, t *testing.T,
 	}
 
 	var outputIndex uint32
-	if !bytes.Equal(tx.TxOut[0].PkScript, p2shScript) {
+	if !bytes.Equal(tx.(*wire.MsgTx).TxOut[0].PkScript, p2shScript) {
 		outputIndex = 1
 	}
 
 	utxo := &wire.OutPoint{
-		Hash:  tx.TxHash(),
+		Hash:  tx.(*wire.MsgTx).TxHash(),
 		Index: outputIndex,
 	}
 
-	return csvScript, utxo, tx, nil
+	return csvScript, utxo, tx.(*wire.MsgTx), nil
 }
 
 // spendCSVOutput spends an output previously created by the createCSVOutput
@@ -416,7 +421,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	// relative lock times.
 
 	setup := testSetup.Simnet1
-	r := setup.NewInstance(t.Name()).(*harness.Harness)
+	r := setup.NewInstance(t.Name()).(*coinharness.Harness)
 	defer setup.Dispose(r)
 
 	assertSoftForkStatus(r, t, csvKey, blockchain.ThresholdStarted)
@@ -425,7 +430,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to obtain harness address: %v", err)
 	}
-	harnessScript, err := txscript.PayToAddrScript(harnessAddr)
+	harnessScript, err := txscript.PayToAddrScript(harnessAddr.(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to generate pkScript: %v", err)
 	}
@@ -489,8 +494,10 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 			Txns:         txns,
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
-		block, err := btcharness.GenerateAndSubmitBlock(args)
+		block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client),&args)
 		if err != nil {
 			t.Fatalf("unable to submit block: %v", err)
 		}
@@ -506,7 +513,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	// genesis target period, so we mine 192 blocks. This'll put us at
 	// height 299. The getblockchaininfo call checks the state for the
 	// block AFTER the current height.
-	numBlocks := (r.Node.Network().MinerConfirmationWindow * 2) - 8
+	numBlocks := (r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow * 2) - 8
 	if _, err := r.NodeRPCClient().(*rpcclient.Client).Generate(numBlocks); err != nil {
 		t.Fatalf("unable to generate blocks: %v", err)
 	}
@@ -572,8 +579,10 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    timeStamp,
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
-		b, err := btcharness.GenerateAndSubmitBlock(args)
+		b, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
 			t.Fatalf("unable to generate block: %v", err)
 		}
@@ -695,8 +704,10 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 				Txns:         txns,
 				BlockVersion: vbLegacyBlockVersion,
 				BlockTime:    time.Time{},
+				MiningAddress: r.MiningAddress.(btcutil.Address),
+				Network: r.Node.Network().(*chaincfg.Params),
 			}
-			_, err := btcharness.GenerateAndSubmitBlock(args)
+			_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client),&args)
 			if err == nil {
 				t.Fatalf("test #%d, invalid block accepted", i)
 			}
@@ -706,7 +717,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 
 		// Generate a block, the transaction should be included within
 		// the newly mined block.
-		blockHashes, err := r.NodeRPCClient().Generate(1)
+		blockHashes, err := r.NodeRPCClient().(*rpcclient.Client).Generate(1)
 		if err != nil {
 			t.Fatalf("unable to mine block: %v", err)
 		}
