@@ -7,6 +7,7 @@ package btcregtest
 import (
 	"fmt"
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcutil"
 	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"runtime"
@@ -154,8 +155,10 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	confirmationWindow := r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow
 	for i := uint32(0); i < confirmationWindow-2; i++ {
 		args := &btcharness.GenerateBlockArgs{
-			BlockVersion: vbLegacyBlockVersion,
-			BlockTime:    time.Time{},
+			BlockVersion:  vbLegacyBlockVersion,
+			BlockTime:     time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), args)
 		if err != nil {
@@ -174,6 +177,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	args := btcharness.GenerateBlockArgs{
 		BlockVersion: vbLegacyBlockVersion,
 		BlockTime:    time.Time{},
+		MiningAddress: r.MiningAddress.(btcutil.Address),
+		Network: r.Node.Network().(*chaincfg.Params),
 	}
 	_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 	if err != nil {
@@ -201,6 +206,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: signalForkVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
@@ -211,6 +218,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
@@ -232,6 +241,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: signalForkVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
@@ -242,6 +253,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
@@ -263,6 +276,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
@@ -283,6 +298,8 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion: vbLegacyBlockVersion,
 			BlockTime:    time.Time{},
+			MiningAddress: r.MiningAddress.(btcutil.Address),
+			Network: r.Node.Network().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &args)
 		if err != nil {
