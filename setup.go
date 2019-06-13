@@ -84,7 +84,7 @@ func Setup() *SimpleTestSetup {
 		WorkingDir: pin.NewTempDir(setupWorkingDir(), "simpleregtest").MakeDir(),
 	}
 
-	btcdEXE := &commandline.ExplicitExecutablePathString{PathString: "../../../btcsuite/btcd/btcd.exe"}
+	btcdEXE := &commandline.ExplicitExecutablePathString{PathString: "../../btcsuite/btcd/btcd.exe"}
 
 	setup.NodeFactory = &nodecls.ConsoleNodeFactory{
 		NodeExecutablePathProvider: btcdEXE,
