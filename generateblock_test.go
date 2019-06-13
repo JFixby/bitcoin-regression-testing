@@ -5,7 +5,10 @@
 package btcregtest
 
 import (
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/btcharness"
+	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
 
@@ -30,7 +33,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to generate new address: %v", err)
 	}
-	pkScript, err := txscript.PayToAddrScript(addr)
+	pkScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to create script: %v", err)
 	}
@@ -39,8 +42,8 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	const numTxns = 5
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
-		ctargs := &btcharness.CreateTransactionArgs{
-			Outputs: []*wire.TxOut{output},
+		ctargs := &coinharness.CreateTransactionArgs{
+			Outputs: []coinharness.OutputTx{output},
 			FeeRate: 10,
 			Change:  true,
 		}
@@ -49,7 +52,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 			t.Fatalf("unable to create tx: %v", err)
 		}
 
-		txns = append(txns, btcutil.NewTx(tx))
+		txns = append(txns, btcutil.NewTx(tx.(*wire.MsgTx)))
 	}
 
 	// Now generate a block with the default block version, and a zero'd
@@ -59,8 +62,10 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 		Txns:         txns,
 		BlockVersion: BlockVersion,
 		BlockTime:    time.Time{},
+		MiningAddress: r.MiningAddress.(btcutil.Address),
+		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err := btcharness.GenerateAndSubmitBlock(newBlockArgs)
+	block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -86,8 +91,10 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	newBlockArgs2 := btcharness.GenerateBlockArgs{
 		BlockVersion: targetBlockVersion,
 		BlockTime:    timestamp,
+		MiningAddress: r.MiningAddress.(btcutil.Address),
+		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err = btcharness.GenerateAndSubmitBlock(newBlockArgs2)
+	block, err = btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs2)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
