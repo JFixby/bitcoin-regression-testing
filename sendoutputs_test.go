@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/jfixby/coinharness"
 	"testing"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -47,20 +48,24 @@ func TestSendOutputs(t *testing.T) {
 
 		// Next, send amt BTC to this address, spending from one of our mature
 		// coinbase outputs.
-		addrScript, err := txscript.PayToAddrScript(addr)
+		addrScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
 		if err != nil {
 			t.Fatalf("unable to generate pkscript to addr: %v", err)
 		}
 		output := wire.NewTxOut(int64(amt), addrScript)
-		txid, err := r.Wallet.SendOutputs([]*wire.TxOut{output}, 10)
+		sendArgs := &coinharness.SendOutputsArgs{
+			Outputs: []coinharness.OutputTx{output},
+			FeeRate: 10,
+		}
+		txid, err := r.Wallet.SendOutputs(sendArgs)
 		if err != nil {
 			t.Fatalf("coinbase spend failed: %v", err)
 		}
-		return txid
+		return txid.(*chainhash.Hash)
 	}
 
 	assertTxMined := func(txid *chainhash.Hash, blockHash *chainhash.Hash) {
-		block, err := r.NodeRPCClient().GetBlock(blockHash)
+		block, err := r.NodeRPCClient().(*rpcclient.Client).GetBlock(blockHash)
 		if err != nil {
 			t.Fatalf("unable to get block: %v", err)
 		}
