@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcutil"
 	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
@@ -101,7 +102,7 @@ func checkJoinMempools(t *testing.T) {
 	// Generate a coinbase spend to a new address within the main harness'
 	// mempool.
 	addr, err := r.Wallet.NewAddress(nil)
-	addrScript, err := txscript.PayToAddrScript(addr)
+	addrScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to generate pkscript to addr: %v", err)
 	}
@@ -115,7 +116,7 @@ func checkJoinMempools(t *testing.T) {
 	if err != nil {
 		t.Fatalf("coinbase spend failed: %v", err)
 	}
-	if _, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx, true); err != nil {
+	if _, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
 		t.Fatalf("send transaction failed: %v", err)
 	}
 
@@ -167,7 +168,7 @@ func checkJoinMempools(t *testing.T) {
 
 	// Send the transaction to the local harness which will result in synced
 	// mempools.
-	if _, err := h.NodeRPCClient().SendRawTransaction(testTx, true); err != nil {
+	if _, err := h.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
 		t.Fatalf("send transaction failed: %v", err)
 	}
 
