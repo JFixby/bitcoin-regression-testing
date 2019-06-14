@@ -1,4 +1,4 @@
-Bitcoin regressions testing
+Bitcoin regression testing
 =======
 [![Build Status](http://img.shields.io/travis/jfixby/btcregtest.svg)](https://travis-ci.org/jfixby/btcregtest)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
