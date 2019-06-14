@@ -63,11 +63,11 @@ if [ ! "$DOCKER" ]; then
 fi
 
 # use Travis cache with docker
-DOCKER_IMAGE_TAG=jfixby-golang-builder-$GOVERSION
+DOCKER_IMAGE_TAG=btcd-golang-builder-$GOVERSION
 $DOCKER pull jfixby/$DOCKER_IMAGE_TAG
 
 $DOCKER run --rm -it -v $(pwd):/src:Z jfixby/$DOCKER_IMAGE_TAG /bin/bash -c "\
   rsync -ra --filter=':- .gitignore'  \
   /src/ /go/src/github.com/jfixby/$REPO/ && \
-  dcrd --version && \
+  btcd --version && \
   env GOVERSION=$GOVERSION GO111MODULE=on bash run_tests.sh"
