@@ -1,6 +1,6 @@
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
-github.com/btcsuite/btcd v0.0.0-20190605094302-a0d1e3e36d50 h1:4i3KsuVA0o0KoBxAC5x+MY7RbteiMK1V7gf/G08NGIQ=
-github.com/btcsuite/btcd v0.0.0-20190605094302-a0d1e3e36d50/go.mod h1:3J08xEfcugPacsc34/LKRU2yO7YmuT8yt28J8k2+rrI=
+github.com/btcsuite/btcd v0.0.0-20190614013741-962a206e94e9 h1:18Pe+JPyglNO9lzLrQHj7Dwmdi4c49D8xQTqTRz3qJo=
+github.com/btcsuite/btcd v0.0.0-20190614013741-962a206e94e9/go.mod h1:3J08xEfcugPacsc34/LKRU2yO7YmuT8yt28J8k2+rrI=
 github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f h1:bAs4lUbRJpnnkd9VhRV3jjAVU7DJVjMaK+IsvSeZvFo=
 github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f/go.mod h1:TdznJufoqS23FtqVCzL0ZqgP5MqXbb4fg/WgDys70nA=
 github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d h1:yJzD/yFppdVCf6ApMkVy8cUxV0XrxdP9rVf6D87/Mng=
@@ -17,10 +17,10 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
-github.com/jfixby/btcharness v0.0.0-20190613131229-194095996fcd h1:eR5Qt/sT7DUa+sBR5ZSnSxn9393lnoOzzILOT166+hk=
-github.com/jfixby/btcharness v0.0.0-20190613131229-194095996fcd/go.mod h1:555uTDfqzdJBHjT9HOUmacdo0p+AtQs+m9Z0x8KSgBA=
-github.com/jfixby/coinharness v0.0.0-20190613130250-334de516a4e7 h1:hiWCGgmZ7Jej7Igp6DhcsBJxGjbx1DxDQLayMFEajTM=
-github.com/jfixby/coinharness v0.0.0-20190613130250-334de516a4e7/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
+github.com/jfixby/btcharness v0.0.0-20190613194933-97d710d27eb0 h1:IQiCT6JKr+LmTeWmF9eATdZU4Ly30VutI4WG7OtOHwU=
+github.com/jfixby/btcharness v0.0.0-20190613194933-97d710d27eb0/go.mod h1:555uTDfqzdJBHjT9HOUmacdo0p+AtQs+m9Z0x8KSgBA=
+github.com/jfixby/coinharness v0.0.0-20190613194841-d42f516e0ec9 h1:MhYnoKM1rf2F0qGa7agye7b9hLzjU9hKGArYVILCj0g=
+github.com/jfixby/coinharness v0.0.0-20190613194841-d42f516e0ec9/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
 github.com/jfixby/pin v0.0.0-20190612200436-0b0f8bcc3b67 h1:aI7xdhCdTf/RJH0gn51X626Wm/P0VEoj/y4P/sK1BWc=
 github.com/jfixby/pin v0.0.0-20190612200436-0b0f8bcc3b67/go.mod h1:fcyyZW36sY5GM2qsX/sewjJu7y5ngGKoELUbDEccDqY=
 github.com/jrick/logrotate v1.0.0/go.mod h1:LNinyqDIJnpAur+b8yyulnQw/wDuN1+BYKlTRt3OuAQ=
