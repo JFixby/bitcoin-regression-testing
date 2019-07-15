@@ -30,7 +30,7 @@ set -ex
 
 # Default GOVERSION
 [[ ! "$GOVERSION" ]] && GOVERSION=1.12
-REPO=dcrregtest
+REPO=btcregtest
 
 testrepo () {
   GO=go
