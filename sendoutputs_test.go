@@ -24,7 +24,7 @@ func TestBallance(t *testing.T) {
 
 	expectedBalance := btcutil.Amount(
 		int64(testSetup.Regnet25.NumMatureOutputs) * 50 * btcutil.SatoshiPerBitcoin)
-	actualBalance := r.Wallet.ConfirmedBalance()
+	actualBalance := r.Wallet.GetBalance()
 
 	if actualBalance != expectedBalance {
 		t.Fatalf("expected wallet balance of %v instead have %v",

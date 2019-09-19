@@ -95,7 +95,7 @@ func launchHarnessSequence(h *coinharness.Harness, args *launchArguments) {
 
 	walletLaunchArguments := &coinharness.TestWalletStartArgs{
 		NodeRPCCertFile:          node.CertFile(),
-		DebugWalletOutput:        args.DebugWalletOutput,
+		DebugOutput:              args.DebugWalletOutput,
 		MaxSecondsToWaitOnLaunch: 90,
 		NodeRPCConfig:            rpcConfig,
 	}

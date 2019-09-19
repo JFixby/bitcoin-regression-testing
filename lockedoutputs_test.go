@@ -20,7 +20,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 	//}
 	r := ObtainHarness(mainHarnessName)
 	// Obtain the initial balance of the wallet at this point.
-	startingBalance := r.Wallet.ConfirmedBalance().(btcutil.Amount)
+	startingBalance := r.Wallet.GetBalance().(btcutil.Amount)
 
 	// First, create a signed transaction spending some outputs.
 	addr, err := r.Wallet.NewAddress(nil)
@@ -45,7 +45,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 
 	// The current wallet balance should now be at least 50 BTC less
 	// (accounting for fees) than the period balance
-	currentBalance := r.Wallet.ConfirmedBalance().(btcutil.Amount)
+	currentBalance := r.Wallet.GetBalance().(btcutil.Amount)
 	if !(currentBalance <= startingBalance-outputAmt) {
 		t.Fatalf("spent outputs not locked: previous balance %v, "+
 			"current balance %v", startingBalance, currentBalance)
@@ -60,7 +60,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 		inpts[i] = j
 	}
 	r.Wallet.UnlockOutputs(inpts)
-	currentBalance = r.Wallet.ConfirmedBalance().(btcutil.Amount)
+	currentBalance = r.Wallet.GetBalance().(btcutil.Amount)
 	if currentBalance != startingBalance {
 		t.Fatalf("current and starting balance should now match: "+
 			"expected %v, got %v", startingBalance, currentBalance)

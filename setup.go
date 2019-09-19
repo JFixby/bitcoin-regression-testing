@@ -153,8 +153,8 @@ func Setup() *SimpleTestSetup {
 	// Deploy harness spawner with empty test chain
 	setup.Regnet0 = &ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
-		DebugNodeOutput:   false,
-		DebugWalletOutput: false,
+		DebugNodeOutput:   true,
+		DebugWalletOutput: true,
 		NumMatureOutputs:  0,
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
@@ -164,8 +164,8 @@ func Setup() *SimpleTestSetup {
 	// Deploy harness spawner with empty test chain
 	setup.Simnet0 = &ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
-		DebugNodeOutput:   false,
-		DebugWalletOutput: false,
+		DebugNodeOutput:   true,
+		DebugWalletOutput: true,
 		NumMatureOutputs:  0,
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,

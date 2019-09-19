@@ -84,6 +84,8 @@ func (testSetup *ChainWithMatureOutputsSpawner) NewInstance(harnessName string) 
 		Seed:          btcharness.NewTestSeed(seedSalt),
 		WalletRPCHost: localhost,
 		WalletRPCPort: walletRPC,
+		NodeRPCPort:   localhost,
+		NodeRPCPort:   nodeRPC,
 		ActiveNet:     testSetup.ActiveNet,
 	}
 
