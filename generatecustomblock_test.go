@@ -3,8 +3,8 @@ package btcregtest
 import (
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcutil"
-	"github.com/jfixby/coinharness"
 	"github.com/jfixby/btcharness"
+	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
 

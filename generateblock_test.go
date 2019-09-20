@@ -5,8 +5,8 @@ import (
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
-	"github.com/jfixby/coinharness"
 	"github.com/jfixby/btcharness"
+	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
 )

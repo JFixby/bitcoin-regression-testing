@@ -2,15 +2,15 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/rpcclient"
-	"github.com/jfixby/coinharness"
 	"github.com/jfixby/btcharness"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"testing"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/btcsuite/btcutil"
 )
 
 func genSpend(t *testing.T, r *coinharness.Harness, amt btcutil.Amount) *chainhash.Hash {
@@ -64,7 +64,7 @@ func TestBallance(t *testing.T) {
 	//}
 	r := ObtainHarness(t.Name() + ".8")
 
-	expectedBalance := btcutil.Amount(7200 * btcutil.AtomsPerCoin)
+	expectedBalance := btcutil.Amount(7200 * btcutil.SatoshiPerBitcoin)
 	actualBalance := coinharness.GetBalance(t, r.Wallet).TotalSpendable.(btcutil.Amount)
 
 	if actualBalance != expectedBalance {
@@ -84,7 +84,7 @@ func TestSendOutputs(t *testing.T) {
 	r.Wallet.Sync(H)
 	// First, generate a small spend which will require only a single
 	// input.
-	txid := genSpend(t, r, btcutil.Amount(5*btcutil.AtomsPerCoin))
+	txid := genSpend(t, r, btcutil.Amount(5*btcutil.SatoshiPerBitcoin))
 
 	// Generate a single block, the transaction the wallet created should
 	// be found in this block.
@@ -96,7 +96,7 @@ func TestSendOutputs(t *testing.T) {
 
 	// Next, generate a spend much greater than the block reward. This
 	// transaction should also have been mined properly.
-	txid = genSpend(t, r, btcutil.Amount(1000*btcutil.AtomsPerCoin))
+	txid = genSpend(t, r, btcutil.Amount(1000*btcutil.SatoshiPerBitcoin))
 	blockHashes, err = r.NodeRPCClient().Generate(1)
 	if err != nil {
 		t.Fatalf("unable to generate single block: %v", err)
