@@ -6,7 +6,6 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"testing"
@@ -65,7 +64,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 		MiningAddress: r.MiningAddress.(btcutil.Address),
 		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs)
+	block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -94,7 +93,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 		MiningAddress: r.MiningAddress.(btcutil.Address),
 		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err = btcharness.GenerateAndSubmitBlock(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs2)
+	block, err = btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs2)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}

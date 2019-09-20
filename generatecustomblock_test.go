@@ -64,7 +64,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 		MiningAddress: r.MiningAddress.(btcutil.Address),
 		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err := btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs)
+	block, err := btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 		MiningAddress: r.MiningAddress.(btcutil.Address),
 		Network: r.Node.Network().(*chaincfg.Params),
 	}
-	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient().(*rpcclient.Client), &newBlockArgs2)
+	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs2)
 	if err != nil {
 		t.Fatalf("unable to generate block: %v", err)
 	}

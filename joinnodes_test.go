@@ -76,7 +76,7 @@ func checkJoinMempools(t *testing.T) {
 	r := ObtainHarness(mainHarnessName)
 
 	// Assert main test harness has no transactions in its mempool.
-	pooledHashes, err := r.NodeRPCClient().(*rpcclient.Client).GetRawMempool()
+	pooledHashes, err := r.NodeRPCClient().GetRawMempool()
 	if err != nil {
 		t.Fatalf("unable to get mempool for main test harness: %v", err)
 	}
@@ -116,7 +116,7 @@ func checkJoinMempools(t *testing.T) {
 	if err != nil {
 		t.Fatalf("coinbase spend failed: %v", err)
 	}
-	if _, err := r.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
+	if _, err := r.NodeRPCClient().SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
 		t.Fatalf("send transaction failed: %v", err)
 	}
 
@@ -125,7 +125,7 @@ func checkJoinMempools(t *testing.T) {
 	harnessSynced := make(chan struct{})
 	go func() {
 		for {
-			poolHashes, err := r.NodeRPCClient().(*rpcclient.Client).GetRawMempool()
+			poolHashes, err := r.NodeRPCClient().GetRawMempool()
 			if err != nil {
 				t.Fatalf("failed to retrieve harness mempool: %v", err)
 			}
@@ -168,7 +168,7 @@ func checkJoinMempools(t *testing.T) {
 
 	// Send the transaction to the local harness which will result in synced
 	// mempools.
-	if _, err := h.NodeRPCClient().(*rpcclient.Client).SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
+	if _, err := h.NodeRPCClient().SendRawTransaction(testTx.(*wire.MsgTx), true); err != nil {
 		t.Fatalf("send transaction failed: %v", err)
 	}
 
