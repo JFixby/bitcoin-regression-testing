@@ -18,9 +18,6 @@ const BlockVersion = 4
 
 func TestGenerateAndSubmitBlock(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC harness tests in short mode")
-	}
 	r := ObtainHarness(mainHarnessName)
 
 	// Generate a few test spend transactions.
@@ -28,7 +25,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to generate new address: %v", err)
 	}
-	pkScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
+	pkScript, err := txscript.PayToAddrScript(addr.Internal().(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to create script: %v", err)
 	}
@@ -57,7 +54,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 		Txns:          txns,
 		BlockVersion:  BlockVersion,
 		BlockTime:     time.Time{},
-		MiningAddress: r.MiningAddress.(btcutil.Address),
+		MiningAddress: r.MiningAddress.Internal().(btcutil.Address),
 		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs)
@@ -86,7 +83,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	newBlockArgs2 := btcharness.GenerateBlockArgs{
 		BlockVersion:  targetBlockVersion,
 		BlockTime:     timestamp,
-		MiningAddress: r.MiningAddress.(btcutil.Address),
+		MiningAddress: r.MiningAddress.Internal().(btcutil.Address),
 		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	block, err = btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs2)
