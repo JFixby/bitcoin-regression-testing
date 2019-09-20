@@ -1,15 +1,15 @@
-package dcrregtest
+package btcregtest
 
 import (
 	"fmt"
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/btcsuite/btcd/btcutil"
 	"testing"
 )
 
 func TestSetupValidity(t *testing.T) {
-	coins50 := dcrutil.Amount(50 /*DCR*/ * 1e8)
+	coins50 := btcutil.Amount(50 /*BTC*/ * 1e8)
 	stringVal := fmt.Sprintf("%v", coins50)
-	expectedStringVal := "50 DCR"
+	expectedStringVal := "50 BTC"
 	//pin.D("stringVal", stringVal)
 	if expectedStringVal != stringVal {
 		t.Fatalf("Incorrect coin: "+

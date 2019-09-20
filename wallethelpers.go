@@ -1,13 +1,11 @@
-package dcrregtest
+package btcregtest
 
 import (
 	"fmt"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/wire"
-	"github.com/decred/dcrwallet/errors"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/btcjson"
+	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/wire"
 	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"math"
@@ -41,7 +39,7 @@ func mineBlock(t *testing.T, r *coinharness.Harness) {
 	}
 }
 
-func reverse(results []dcrjson.ListTransactionsResult) []dcrjson.ListTransactionsResult {
+func reverse(results []btcjson.ListTransactionsResult) []btcjson.ListTransactionsResult {
 	i := 0
 	j := len(results) - 1
 	for i < j {
@@ -86,8 +84,8 @@ func generateListeningPorts(index, base int) (int, int, int) {
 	return x, y, z
 }
 
-func getMiningAddr(walletClient *rpcclient.Client) dcrutil.Address {
-	var miningAddr dcrutil.Address
+func getMiningAddr(walletClient *rpcclient.Client) btcutil.Address {
+	var miningAddr btcutil.Address
 	var err error = nil
 	for i := 0; i < 100; i++ {
 		miningAddr, err = walletClient.GetNewAddress("default")
@@ -131,7 +129,7 @@ func GenerateBlock(h *coinharness.Harness, startHeight uint32) ([]*chainhash.Has
 	return blockHashes, nil
 }
 
-func mustGetStakeInfo(wcl *rpcclient.Client, t *testing.T) *dcrjson.GetStakeInfoResult {
+func mustGetStakeInfo(wcl *rpcclient.Client, t *testing.T) *btcjson.GetStakeInfoResult {
 	stakeinfo, err := wcl.GetStakeInfo()
 	if err != nil {
 		t.Fatal("GetStakeInfo failed: ", err)
@@ -174,7 +172,7 @@ func advanceToHeight(r *coinharness.Harness, t *testing.T, height uint32) {
 }
 
 func newBlockAt(currentHeight uint32, r *coinharness.Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *btcutil.Block, []*chainhash.Hash) {
 	height, block, blockHashes := newBlockAtQuick(currentHeight, r, t)
 
 	time.Sleep(700 * time.Millisecond)
@@ -183,7 +181,7 @@ func newBlockAt(currentHeight uint32, r *coinharness.Harness,
 }
 
 func newBlockAtQuick(currentHeight uint32, r *coinharness.Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *btcutil.Block, []*chainhash.Hash) {
 
 	blockHashes, err := GenerateBlock(r, currentHeight)
 	if err != nil {
@@ -195,10 +193,10 @@ func newBlockAtQuick(currentHeight uint32, r *coinharness.Harness,
 		t.Fatalf("Unable to get block: %v", err)
 	}
 
-	return block.Header.Height, dcrutil.NewBlock(block), blockHashes
+	return block.Header.Height, btcutil.NewBlock(block), blockHashes
 }
 
-func getBestBlock(r *coinharness.Harness, t *testing.T) (uint32, *dcrutil.Block, *chainhash.Hash) {
+func getBestBlock(r *coinharness.Harness, t *testing.T) (uint32, *btcutil.Block, *chainhash.Hash) {
 	bestBlockHash, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetBestBlockHash()
 	if err != nil {
 		t.Fatalf("Unable to get best block hash: %v", err)
@@ -209,7 +207,7 @@ func getBestBlock(r *coinharness.Harness, t *testing.T) (uint32, *dcrutil.Block,
 	}
 	curBlockHeight := bestBlock.Header.Height
 
-	return curBlockHeight, dcrutil.NewBlock(bestBlock), bestBlockHash
+	return curBlockHeight, btcutil.NewBlock(bestBlock), bestBlockHash
 }
 
 func getBestBlockHeight(r *coinharness.Harness, t *testing.T) uint32 {
@@ -222,14 +220,14 @@ func getBestBlockHeight(r *coinharness.Harness, t *testing.T) uint32 {
 }
 
 func newBestBlock(r *coinharness.Harness,
-	t *testing.T) (uint32, *dcrutil.Block, []*chainhash.Hash) {
+	t *testing.T) (uint32, *btcutil.Block, []*chainhash.Hash) {
 	height := getBestBlockHeight(r, t)
 	height, block, blockHash := newBlockAt(height, r, t)
 	return height, block, blockHash
 }
 
 // includesTx checks if a block contains a transaction hash
-func includesTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
+func includesTx(txHash *chainhash.Hash, block *btcutil.Block) bool {
 	if len(block.Transactions()) <= 1 {
 		return false
 	}
@@ -247,7 +245,7 @@ func includesTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
 }
 
 // includesTx checks if a block contains a transaction hash
-func includesStakeTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
+func includesStakeTx(txHash *chainhash.Hash, block *btcutil.Block) bool {
 	if len(block.STransactions()) <= 1 {
 		return false
 	}
@@ -266,7 +264,7 @@ func includesStakeTx(txHash *chainhash.Hash, block *dcrutil.Block) bool {
 
 // getWireMsgTxFee computes the effective absolute fee from a Tx as the amount
 // spent minus sent.
-func getWireMsgTxFee(tx *dcrutil.Tx) dcrutil.Amount {
+func getWireMsgTxFee(tx *btcutil.Tx) btcutil.Amount {
 	var totalSpent int64
 	for _, txIn := range tx.MsgTx().TxIn {
 		totalSpent += txIn.ValueIn
@@ -277,12 +275,12 @@ func getWireMsgTxFee(tx *dcrutil.Tx) dcrutil.Amount {
 		totalSent += txOut.Value
 	}
 
-	return dcrutil.Amount(totalSpent - totalSent)
+	return btcutil.Amount(totalSpent - totalSent)
 }
 
 // getOutPointString uses OutPoint.String() to combine the tx hash with vout
 // index from a ListUnspentResult.
-func getOutPointString(utxo *dcrjson.ListUnspentResult) (string, error) {
+func getOutPointString(utxo *btcjson.ListUnspentResult) (string, error) {
 	txhash, err := chainhash.NewHashFromStr(utxo.TxID)
 	if err != nil {
 		return "", err

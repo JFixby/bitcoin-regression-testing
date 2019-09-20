@@ -2,21 +2,18 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/jfixby/btcharness"
+	"github.com/btcsuite/btcd/btcutil"
 	"github.com/jfixby/coinharness"
+	"github.com/jfixby/btcharness"
 	"testing"
 	"time"
 
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
 )
 
 func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 	// Skip tests when running with -short
-	if testing.Short() {
-		t.Skip("Skipping RPC harness tests in short mode")
-	}
 	r := ObtainHarness(mainHarnessName)
 
 	// Generate a few test spend transactions.
@@ -24,7 +21,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to generate new address: %v", err)
 	}
-	pkScript, err := txscript.PayToAddrScript(addr.(btcutil.Address))
+	pkScript, err := txscript.PayToAddrScript(addr.Internal().(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to create script: %v", err)
 	}
@@ -56,8 +53,8 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			Value:    0,
 			PkScript: []byte{},
 		}},
-		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network:       r.Node.Network().(*chaincfg.Params),
+		MiningAddress: r.MiningAddress.Internal().(btcutil.Address),
+		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	block, err := btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs)
 	if err != nil {
@@ -89,7 +86,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			Value:    0,
 			PkScript: []byte{},
 		}},
-		MiningAddress: r.MiningAddress.(btcutil.Address),
+		MiningAddress: r.MiningAddress.Internal().(btcutil.Address),
 		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs2)

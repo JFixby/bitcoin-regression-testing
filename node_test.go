@@ -1,15 +1,15 @@
-package dcrregtest
+package btcregtest
 
 import (
 	"bytes"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrd/wire"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/btcjson"
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/txscript"
+	"github.com/btcsuite/btcd/wire"
 	"github.com/jfixby/coinharness"
-	"github.com/jfixby/dcrharness"
+	"github.com/jfixby/btcharness"
 	"testing"
 	"time"
 )
@@ -130,7 +130,7 @@ func checkJoinBlocks(t *testing.T) {
 	nodeSlice := []*coinharness.Harness{r, h}
 	blocksSynced := make(chan struct{})
 	go func() {
-		if err := coinharness.JoinNodes(dcrjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
+		if err := coinharness.JoinNodes(btcjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
 			t.Fatalf("unable to join node on blocks: %v", err)
 		}
 		blocksSynced <- struct{}{}
@@ -167,7 +167,7 @@ func checkJoinMempools(t *testing.T) {
 	r := ObtainHarness(mainHarnessName)
 
 	// Assert main test harness has no transactions in its mempool.
-	pooledHashes, err := r.NodeRPCClient().GetRawMempool(dcrjson.GRMAll)
+	pooledHashes, err := r.NodeRPCClient().GetRawMempool(btcjson.GRMAll)
 	if err != nil {
 		t.Fatalf("unable to get mempool for main test harness: %v", err)
 	}
@@ -186,7 +186,7 @@ func checkJoinMempools(t *testing.T) {
 
 	// Both mempools should be considered synced as they are empty.
 	// Therefore, this should return instantly.
-	if err := coinharness.JoinNodes(dcrjson.GRMAll, nodeSlice, coinharness.Mempools); err != nil {
+	if err := coinharness.JoinNodes(btcjson.GRMAll, nodeSlice, coinharness.Mempools); err != nil {
 		t.Fatalf("unable to join node on mempools: %v", err)
 	}
 
@@ -196,14 +196,14 @@ func checkJoinMempools(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to generate address: %v", err)
 	}
-	addrScript, err := txscript.PayToAddrScript(addr.Internal().(dcrutil.Address))
+	addrScript, err := txscript.PayToAddrScript(addr.Internal().(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to generate pkscript to addr: %v", err)
 	}
 
 	output := wire.NewTxOut(5e8, addrScript)
 	ctargs := &coinharness.CreateTransactionArgs{
-		Outputs: []coinharness.OutputTx{&dcrharness.OutputTx{output}},
+		Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 		FeeRate: 10,
 	}
 	testTx, err := r.Wallet.CreateTransaction(ctargs)
@@ -219,7 +219,7 @@ func checkJoinMempools(t *testing.T) {
 	harnessSynced := make(chan struct{})
 	go func() {
 		for {
-			poolHashes, err := r.NodeRPCClient().GetRawMempool(dcrjson.GRMAll)
+			poolHashes, err := r.NodeRPCClient().GetRawMempool(btcjson.GRMAll)
 			if err != nil {
 				t.Fatalf("failed to retrieve harness mempool: %v", err)
 			}
@@ -240,7 +240,7 @@ func checkJoinMempools(t *testing.T) {
 	// should be blocked on the JoinNodes call.
 	poolsSynced := make(chan struct{})
 	go func() {
-		if err := coinharness.JoinNodes(dcrjson.GRMAll, nodeSlice, coinharness.Mempools); err != nil {
+		if err := coinharness.JoinNodes(btcjson.GRMAll, nodeSlice, coinharness.Mempools); err != nil {
 			t.Fatalf("unable to join node on mempools: %v", err)
 		}
 		poolsSynced <- struct{}{}
@@ -256,7 +256,7 @@ func checkJoinMempools(t *testing.T) {
 	if err := coinharness.ConnectNode(h, r, rpcclient.ANAdd); err != nil {
 		t.Fatalf("unable to connect harnesses: %v", err)
 	}
-	if err := coinharness.JoinNodes(dcrjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
+	if err := coinharness.JoinNodes(btcjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
 		t.Fatalf("unable to join node on blocks: %v", err)
 	}
 
@@ -281,21 +281,21 @@ func checkJoinMempools(t *testing.T) {
 func TestMemWalletLockedOutputs(t *testing.T) {
 	r := ObtainHarness(mainHarnessName)
 	// Obtain the initial balance of the wallet at this point.
-	startingBalance := coinharness.GetBalance(t, r.Wallet).TotalSpendable.(dcrutil.Amount)
+	startingBalance := coinharness.GetBalance(t, r.Wallet).TotalSpendable.(btcutil.Amount)
 
 	// First, create a signed transaction spending some outputs.
 	addr, err := r.Wallet.NewAddress(nil)
 	if err != nil {
 		t.Fatalf("unable to generate new address: %v", err)
 	}
-	pkScript, err := txscript.PayToAddrScript(addr.Internal().(dcrutil.Address))
+	pkScript, err := txscript.PayToAddrScript(addr.Internal().(btcutil.Address))
 	if err != nil {
 		t.Fatalf("unable to create script: %v", err)
 	}
-	outputAmt := dcrutil.Amount(50 * dcrutil.AtomsPerCoin)
+	outputAmt := btcutil.Amount(50 * btcutil.AtomsPerCoin)
 	output := wire.NewTxOut(int64(outputAmt), pkScript)
 	ctargs := &coinharness.CreateTransactionArgs{
-		Outputs: []coinharness.OutputTx{&dcrharness.OutputTx{output}},
+		Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 		FeeRate: 10,
 	}
 	tx, err := r.Wallet.CreateTransaction(ctargs)
@@ -305,7 +305,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 
 	// The current wallet balance should now be at least 50 BTC less
 	// (accounting for fees) than the period balance
-	currentBalance := coinharness.GetBalance(t, r.Wallet).TotalSpendable.(dcrutil.Amount)
+	currentBalance := coinharness.GetBalance(t, r.Wallet).TotalSpendable.(btcutil.Amount)
 	if !(currentBalance <= startingBalance-outputAmt) {
 		t.Fatalf("spent outputs not locked: previous balance %v, "+
 			"current balance %v", startingBalance, currentBalance)
@@ -320,7 +320,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 		inpts[i] = j
 	}
 	r.Wallet.UnlockOutputs(inpts)
-	currentBalance = coinharness.GetBalance(t, r.Wallet).TotalSpendable.(dcrutil.Amount)
+	currentBalance = coinharness.GetBalance(t, r.Wallet).TotalSpendable.(btcutil.Amount)
 	if currentBalance != startingBalance {
 		t.Fatalf("current and starting balance should now match: "+
 			"expected %v, got %v", startingBalance, currentBalance)
@@ -354,8 +354,8 @@ func TestMemWalletReorg(t *testing.T) {
 	defer testSetup.Regnet5.Dispose(h)
 	h.Wallet.Sync(testSetup.Regnet5.NumMatureOutputs)
 
-	expectedBalance := dcrutil.Amount(1200 * dcrutil.AtomsPerCoin)
-	walletBalance := coinharness.GetBalance(t, h.Wallet).TotalSpendable.(dcrutil.Amount)
+	expectedBalance := btcutil.Amount(1200 * btcutil.AtomsPerCoin)
+	walletBalance := coinharness.GetBalance(t, h.Wallet).TotalSpendable.(btcutil.Amount)
 	if expectedBalance != walletBalance {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)
@@ -367,15 +367,15 @@ func TestMemWalletReorg(t *testing.T) {
 		t.Fatalf("unable to connect harnesses: %v", err)
 	}
 	nodeSlice := []*coinharness.Harness{r, h}
-	if err := coinharness.JoinNodes(dcrjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
+	if err := coinharness.JoinNodes(btcjson.GRMAll, nodeSlice, coinharness.Blocks); err != nil {
 		t.Fatalf("unable to join node on blocks: %v", err)
 	}
 
 	// The original wallet should now have a balance of 0 BTC as its entire
 	// chain should have been decimated in favor of the main h'
 	// chain.
-	expectedBalance = dcrutil.Amount(0)
-	walletBalance = coinharness.GetBalance(t, h.Wallet).TotalSpendable.(dcrutil.Amount)
+	expectedBalance = btcutil.Amount(0)
+	walletBalance = coinharness.GetBalance(t, h.Wallet).TotalSpendable.(btcutil.Amount)
 	if expectedBalance != walletBalance {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)

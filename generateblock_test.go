@@ -2,19 +2,18 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/jfixby/btcharness"
-	"github.com/jfixby/coinharness"
-	"testing"
-	"time"
-
+	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/jfixby/coinharness"
+	"github.com/jfixby/btcharness"
+	"testing"
+	"time"
 )
 
 // BlockVersion is the default block version used when generating
 // blocks.
-const BlockVersion = 4
+const BlockVersion = int32(wire.TxVersion)
 
 func TestGenerateAndSubmitBlock(t *testing.T) {
 	// Skip tests when running with -short

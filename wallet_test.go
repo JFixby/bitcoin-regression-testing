@@ -1,15 +1,15 @@
-package dcrregtest
+package btcregtest
 
 import (
 	"encoding/hex"
-	"github.com/decred/dcrd/blockchain/stake"
-	"github.com/decred/dcrd/chaincfg"
-	"github.com/decred/dcrd/chaincfg/chainhash"
-	"github.com/decred/dcrd/dcrjson"
-	"github.com/decred/dcrd/dcrutil"
-	"github.com/decred/dcrd/rpcclient"
-	"github.com/decred/dcrd/txscript"
-	"github.com/decred/dcrwallet/wallet"
+	"github.com/btcsuite/btcd/blockchain/stake"
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/btcjson"
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/txscript"
+	"github.com/btcsuite/btcwallet/wallet"
 	"github.com/google/go-cmp/cmp"
 	"math"
 	"math/big"
@@ -203,7 +203,7 @@ func TestValidateAddress(t *testing.T) {
 	//-----------------------------------------
 	addrStr := "SsqvxBX8MZC5iiKCgBscwt69jg4u4hHhDKU"
 	// Try to validate an address that is not owned by wallet
-	otherAddress, err := dcrutil.DecodeAddress(addrStr)
+	otherAddress, err := btcutil.DecodeAddress(addrStr)
 	if err != nil {
 		t.Fatalf("Unable to decode address %v: %v", otherAddress, err)
 	}
@@ -232,7 +232,7 @@ func TestValidateAddress(t *testing.T) {
 	}
 	devSubAddrStr := addrs[0].String()
 
-	DevAddr, err := dcrutil.DecodeAddress(devSubAddrStr)
+	DevAddr, err := btcutil.DecodeAddress(devSubAddrStr)
 	if err != nil {
 		t.Fatalf("Unable to decode address %s: %v", devSubAddrStr, err)
 	}
@@ -311,7 +311,7 @@ func TestValidateAddress(t *testing.T) {
 				)
 			}
 			// Decode address
-			_, err = dcrutil.DecodeAddress(addrStr)
+			_, err = btcutil.DecodeAddress(addrStr)
 			if err != nil {
 				t.Fatalf("Unable to decode address[%d] %s: %v for <%s>",
 					i,
@@ -366,14 +366,14 @@ func TestGetBalance(t *testing.T) {
 	}
 
 	preAccountBalanceSpendable := 0.0
-	preAccountBalances := make(map[string]dcrjson.GetAccountBalanceResult)
+	preAccountBalances := make(map[string]btcjson.GetAccountBalanceResult)
 	for _, bal := range preBalances.Balances {
 		preAccountBalanceSpendable += bal.Spendable
 		preAccountBalances[bal.AccountName] = bal
 	}
 
 	// Send from default to test account
-	sendAmount := dcrutil.Amount(700000000)
+	sendAmount := btcutil.Amount(700000000)
 	if _, err = r.WalletRPCClient().Internal().(*rpcclient.Client).SendFromMinConf("default", addr, sendAmount, 1); err != nil {
 		t.Fatalf("SendFromMinConf failed: %v", err)
 	}
@@ -385,7 +385,7 @@ func TestGetBalance(t *testing.T) {
 	}
 
 	postAccountBalanceSpendable := 0.0
-	postAccountBalances := make(map[string]dcrjson.GetAccountBalanceResult)
+	postAccountBalances := make(map[string]btcjson.GetAccountBalanceResult)
 	for _, bal := range postBalances.Balances {
 		postAccountBalanceSpendable += bal.Spendable
 		postAccountBalances[bal.AccountName] = bal
@@ -531,7 +531,7 @@ func TestListAccounts(t *testing.T) {
 	acctBalancePreSend := accountsBalancesMinconf0PreSend[accountName]
 
 	// Send from default to test account
-	sendAmount := dcrutil.Amount(700000000)
+	sendAmount := btcutil.Amount(700000000)
 	if _, err = r.WalletRPCClient().Internal().(*rpcclient.Client).SendFromMinConf("default", addr, sendAmount, 1); err != nil {
 		t.Fatal("SendFromMinConf failed.", err)
 	}
@@ -700,7 +700,7 @@ func TestListUnspent(t *testing.T) {
 	}
 
 	// SendFromMinConf to addr
-	amountToSend := dcrutil.Amount(700000000)
+	amountToSend := btcutil.Amount(700000000)
 	txid, err := r.WalletRPCClient().Internal().(*rpcclient.Client).SendFromMinConf("default", addr, amountToSend, 0)
 	if err != nil {
 		t.Fatalf("sendfromminconf failed: %v", err)
@@ -711,7 +711,7 @@ func TestListUnspent(t *testing.T) {
 	// New block is necessary for GetRawTransaction to give a tx with sensible
 	// MsgTx().TxIn[:].ValueIn values.
 
-	// Get *dcrutil.Tx of send to check the inputs
+	// Get *btcutil.Tx of send to check the inputs
 	rawTx, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetRawTransaction(txid)
 	if err != nil {
 		t.Fatalf("getrawtransaction failed: %v", err)
@@ -722,14 +722,14 @@ func TestListUnspent(t *testing.T) {
 	for _, txIn := range rawTx.MsgTx().TxIn {
 		prevOut := &txIn.PreviousOutPoint
 		// Outpoint.String() appends :index to the hash
-		txInIDs[prevOut.String()] = dcrutil.Amount(txIn.ValueIn).ToCoin()
+		txInIDs[prevOut.String()] = btcutil.Amount(txIn.ValueIn).ToCoin()
 	}
 
 	// First check to make sure we see these in the UTXO list prior to send,
 	// then not in the UTXO list after send.
 	for txinID, amt := range txInIDs {
 		if _, ok := utxosBeforeSend[txinID]; !ok {
-			t.Fatalf("Failed to find txid %v (%v DCR) in list of UTXOs",
+			t.Fatalf("Failed to find txid %v (%v BTC) in list of UTXOs",
 				txinID, amt)
 		}
 	}
@@ -752,7 +752,7 @@ func TestListUnspent(t *testing.T) {
 		}
 		if amt, ok := txInIDs[outpointStr]; ok {
 			t.Fatalf("Found PreviousOutPoint of send still in UTXO set: %v, "+
-				"%v DCR", outpointStr, amt)
+				"%v BTC", outpointStr, amt)
 		}
 	}
 }
@@ -852,7 +852,7 @@ func TestSendFrom(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	amountToSend := dcrutil.Amount(1000000)
+	amountToSend := btcutil.Amount(1000000)
 	// Check spendable balance of default account
 	defaultBalanceBeforeSend, err := r.WalletRPCClient().Internal().(*rpcclient.Client).GetBalanceMinConf("default", 0)
 	if err != nil {
@@ -932,7 +932,7 @@ func TestSendFrom(t *testing.T) {
 		totalSent += txOut.Value
 	}
 
-	feeAtoms := dcrutil.Amount(totalSpent - totalSent)
+	feeAtoms := btcutil.Amount(totalSpent - totalSent)
 
 	// Calculate the expected balance for the default account after the tx was sent
 	sentAtoms := uint64(amountToSend + feeAtoms)
@@ -1026,8 +1026,8 @@ func TestSendMany(t *testing.T) {
 
 	// Create 2 accounts to receive funds
 	accountNames := []string{"sendManyTestA", "sendManyTestB"}
-	amountsToSend := []dcrutil.Amount{700000000, 1400000000}
-	addresses := []dcrutil.Address{}
+	amountsToSend := []btcutil.Amount{700000000, 1400000000}
+	addresses := []btcutil.Address{}
 
 	for _, acct := range accountNames {
 		err = wcl.CreateNewAccount(acct)
@@ -1038,8 +1038,8 @@ func TestSendMany(t *testing.T) {
 
 	// Grab new addresses from the wallet, under each account.
 	// Set corresponding amount to send to each address.
-	addressAmounts := make(map[dcrutil.Address]dcrutil.Amount)
-	totalAmountToSend := dcrutil.Amount(0)
+	addressAmounts := make(map[btcutil.Address]btcutil.Amount)
+	totalAmountToSend := btcutil.Amount(0)
 
 	for i, acct := range accountNames {
 		addr, err := r.WalletRPCClient().Internal().(*rpcclient.Client).GetNewAddressGapPolicy(
@@ -1222,7 +1222,7 @@ func TestListTransactions(t *testing.T) {
 	}
 
 	// "regular" not "stake" txtype
-	if *txList1[0].TxType != dcrjson.LTTTRegular {
+	if *txList1[0].TxType != btcjson.LTTTRegular {
 		t.Fatal(`txtype not "regular".`)
 	}
 
@@ -1249,7 +1249,7 @@ func TestListTransactions(t *testing.T) {
 		t.Fatal("Too few vouts.")
 	}
 	txOut := rawTx.MsgTx().TxOut[txList1[0].Vout]
-	voutAmt := dcrutil.Amount(txOut.Value).ToCoin()
+	voutAmt := btcutil.Amount(txOut.Value).ToCoin()
 	// Verify amounts agree
 	if txList1[0].Amount != voutAmt {
 		t.Fatalf("Listed amount %v does not match expected vout amount %v",
@@ -1290,8 +1290,8 @@ func TestListTransactions(t *testing.T) {
 		t.Fatal("Failed to get new address.")
 	}
 
-	atomsInCoin := dcrutil.AtomsPerCoin
-	sendAmount := dcrutil.Amount(2400 * atomsInCoin)
+	atomsInCoin := btcutil.AtomsPerCoin
+	sendAmount := btcutil.Amount(2400 * atomsInCoin)
 	txHash, err := r.WalletRPCClient().Internal().(*rpcclient.Client).SendFromMinConf("default", addr, sendAmount, 6)
 	if err != nil {
 		t.Fatal("Failed to send:", err)
@@ -1317,12 +1317,12 @@ func TestListTransactions(t *testing.T) {
 
 	// The top of the list should be one send and one receive.  The coinbase
 	// spend should be lower in the list.
-	var sendResult, recvResult dcrjson.ListTransactionsResult
+	var sendResult, recvResult btcjson.ListTransactionsResult
 	if txListAll[0].Category == txListAll[1].Category {
 		t.Fatal("Expected one send and one receive, got two", txListAll[0].Category)
 	}
 	// Use a map since order doesn't matter, and keys are not duplicate
-	rxtxResults := map[string]dcrjson.ListTransactionsResult{
+	rxtxResults := map[string]btcjson.ListTransactionsResult{
 		txListAll[0].Category: txListAll[0],
 		txListAll[1].Category: txListAll[1],
 	}
@@ -1427,9 +1427,9 @@ func TestListTransactions(t *testing.T) {
 
 	// Create 2 accounts to receive funds
 	accountNames := []string{"listTxA", "listTxB"}
-	amountsToSend := []dcrutil.Amount{
-		dcrutil.Amount(7 * atomsInCoin),
-		dcrutil.Amount(14 * atomsInCoin),
+	amountsToSend := []btcutil.Amount{
+		btcutil.Amount(7 * atomsInCoin),
+		btcutil.Amount(14 * atomsInCoin),
 	}
 
 	for _, acct := range accountNames {
@@ -1441,7 +1441,7 @@ func TestListTransactions(t *testing.T) {
 
 	// Grab new addresses from the wallet, under each account.
 	// Set corresponding amount to send to each address.
-	addressAmounts := make(map[dcrutil.Address]dcrutil.Amount)
+	addressAmounts := make(map[btcutil.Address]btcutil.Amount)
 
 	for i, acct := range accountNames {
 		addr, err := r.WalletRPCClient().Internal().(*rpcclient.Client).GetNewAddressGapPolicy(
@@ -1480,7 +1480,7 @@ func TestGetSetRelayFee(t *testing.T) {
 
 	r := ObtainWalletHarness(mainWalletHarnessName)
 
-	// dcrrpcclient does not have a getwalletfee or any direct method, so we
+	// btcrpcclient does not have a getwalletfee or any direct method, so we
 	// need to use walletinfo to get.  SetTxFee can be used to set.
 
 	// Wallet RPC client
@@ -1492,13 +1492,13 @@ func TestGetSetRelayFee(t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	// Save the original fee
-	origTxFee, err := dcrutil.NewAmount(walletInfo.TxFee)
+	origTxFee, err := btcutil.NewAmount(walletInfo.TxFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TxFee, err)
 	}
 	// Increase fee by 50%
 	newTxFeeCoin := walletInfo.TxFee * 1.5
-	newTxFee, err := dcrutil.NewAmount(newTxFeeCoin)
+	newTxFee, err := btcutil.NewAmount(newTxFeeCoin)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", newTxFeeCoin, err)
 	}
@@ -1513,7 +1513,7 @@ func TestGetSetRelayFee(t *testing.T) {
 	if err != nil {
 		t.Fatal("WalletInfo failed:", err)
 	}
-	newTxFeeActual, err := dcrutil.NewAmount(walletInfo.TxFee)
+	newTxFeeActual, err := btcutil.NewAmount(walletInfo.TxFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TxFee, err)
 	}
@@ -1538,7 +1538,7 @@ func TestGetSetRelayFee(t *testing.T) {
 	}
 
 	// SendFromMinConf to addr
-	amountToSend := dcrutil.Amount(700000000)
+	amountToSend := btcutil.Amount(700000000)
 	txid, err := r.WalletRPCClient().Internal().(*rpcclient.Client).SendFromMinConf("default", addr, amountToSend, 0)
 	if err != nil {
 		t.Fatalf("sendfromminconf failed: %v", err)
@@ -1562,7 +1562,7 @@ func TestGetSetRelayFee(t *testing.T) {
 	}
 
 	// Negative fee should throw an error
-	err = r.WalletRPCClient().Internal().(*rpcclient.Client).SetTxFee(dcrutil.Amount(-1))
+	err = r.WalletRPCClient().Internal().(*rpcclient.Client).SetTxFee(btcutil.Amount(-1))
 	if err == nil {
 		t.Fatal("SetTxFee accepted negative fee")
 	}
@@ -1580,7 +1580,7 @@ func TestGetSetRelayFee(t *testing.T) {
 func TestGetSetTicketFee(t *testing.T) {
 
 	r := ObtainWalletHarness(mainWalletHarnessName)
-	// dcrrpcclient does not have a getticketee or any direct method, so we
+	// btcrpcclient does not have a getticketee or any direct method, so we
 	// need to use walletinfo to get.  SetTicketFee can be used to set.
 
 	// Get the current ticket fee
@@ -1589,14 +1589,14 @@ func TestGetSetTicketFee(t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	nominalTicketFee := walletInfo.TicketFee
-	origTicketFee, err := dcrutil.NewAmount(nominalTicketFee)
+	origTicketFee, err := btcutil.NewAmount(nominalTicketFee)
 	if err != nil {
 		t.Fatal("Invalid Amount:", nominalTicketFee)
 	}
 
 	// Increase the ticket fee to ensure the SSTx in ths test gets mined
 	newTicketFeeCoin := nominalTicketFee * 1.5
-	newTicketFee, err := dcrutil.NewAmount(newTicketFeeCoin)
+	newTicketFee, err := btcutil.NewAmount(newTicketFeeCoin)
 	if err != nil {
 		t.Fatal("Invalid Amount:", newTicketFeeCoin)
 	}
@@ -1612,7 +1612,7 @@ func TestGetSetTicketFee(t *testing.T) {
 		t.Fatal("WalletInfo failed:", err)
 	}
 	nominalTicketFee = walletInfo.TicketFee
-	newTicketFeeActual, err := dcrutil.NewAmount(nominalTicketFee)
+	newTicketFeeActual, err := btcutil.NewAmount(nominalTicketFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", nominalTicketFee, err)
 	}
@@ -1623,7 +1623,7 @@ func TestGetSetTicketFee(t *testing.T) {
 
 	// Purchase ticket
 	minConf, numTickets := 0, 1
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount. ", err)
 	}
@@ -1659,7 +1659,7 @@ func TestGetSetTicketFee(t *testing.T) {
 	}
 
 	// Negative fee should throw and error
-	err = r.WalletRPCClient().Internal().(*rpcclient.Client).SetTicketFee(dcrutil.Amount(-1))
+	err = r.WalletRPCClient().Internal().(*rpcclient.Client).SetTicketFee(btcutil.Amount(-1))
 	if err == nil {
 		t.Fatal("SetTicketFee accepted negative fee")
 	}
@@ -1696,7 +1696,7 @@ func TestGetTickets(t *testing.T) {
 
 	// Purchase a full blocks worth of tickets
 	minConf, numTicketsPurchased := 1, int(chaincfg.SimNetParams.MaxFreshStakePerBlock)
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount. ", err)
 	}
@@ -1772,7 +1772,7 @@ func TestPurchaseTickets(t *testing.T) {
 	// Set various variables for the test
 	minConf := 0
 	expiry := 0
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount.", err)
 	}
@@ -1850,11 +1850,11 @@ func TestPurchaseTickets(t *testing.T) {
 	if err != nil {
 		t.Fatal("WalletInfo failed.", err)
 	}
-	origTicketFee, err := dcrutil.NewAmount(walletInfo.TicketFee)
+	origTicketFee, err := btcutil.NewAmount(walletInfo.TicketFee)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TicketFee, err)
 	}
-	newTicketFee, err := dcrutil.NewAmount(walletInfo.TicketFee * 1.5)
+	newTicketFee, err := btcutil.NewAmount(walletInfo.TicketFee * 1.5)
 	if err != nil {
 		t.Fatalf("Invalid Amount %f. %v", walletInfo.TicketFee, err)
 	}
@@ -1894,7 +1894,7 @@ func TestPurchaseTickets(t *testing.T) {
 	}
 
 	// Test too low price
-	lowPrice := dcrutil.Amount(1)
+	lowPrice := btcutil.Amount(1)
 	hashes, err = r.WalletRPCClient().Internal().(*rpcclient.Client).PurchaseTicket("default", lowPrice,
 		&minConf, nil, nil, nil, nil, nil, &noSplitTransactions, nil)
 	if err == nil {
@@ -1912,7 +1912,7 @@ func TestPurchaseTickets(t *testing.T) {
 	desiredHeight := uint32(150)
 	numTicket = int(chaincfg.SimNetParams.MaxFreshStakePerBlock)
 	for curBlockHeight < desiredHeight {
-		priceLimit, err = dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+		priceLimit, err = btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 		if err != nil {
 			t.Fatal("Invalid Amount.", err)
 		}
@@ -1992,7 +1992,7 @@ func TestGetStakeInfo(t *testing.T) {
 
 	// Buy tickets to check that they shows up in ownmempooltix/allmempooltix
 	minConf := 1
-	priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+	priceLimit, err := btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 	if err != nil {
 		t.Fatal("Invalid Amount.", err)
 	}
@@ -2067,7 +2067,7 @@ func TestGetStakeInfo(t *testing.T) {
 	// Buy some more tickets (4 blocks worth) so chain doesn't stall when voting
 	// burns through the batch purchased above
 	for i := 0; i < 4; i++ {
-		priceLimit, err := dcrutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
+		priceLimit, err := btcutil.NewAmount(2 * mustGetStakeDiffNext(r, t))
 		if err != nil {
 			t.Fatal("Invalid Amount.", err)
 		}
@@ -2160,9 +2160,9 @@ func TestWalletPassphrase(t *testing.T) {
 	// Try incorrect password
 	err = wcl.WalletUnlock("Wrong Password", 0)
 	// Check for "-14: invalid passphrase for master private key"
-	if err != nil && err.(*dcrjson.RPCError).Code !=
-		dcrjson.ErrRPCWalletPassphraseIncorrect {
-		// dcrjson.ErrWalletPassphraseIncorrect.Code
+	if err != nil && err.(*btcjson.RPCError).Code !=
+		btcjson.ErrRPCWalletPassphraseIncorrect {
+		// btcjson.ErrWalletPassphraseIncorrect.Code
 		t.Fatalf("WalletPassphrase with INCORRECT passphrase exited with: %v",
 			err)
 	}
@@ -2182,11 +2182,11 @@ func TestWalletPassphrase(t *testing.T) {
 	if err == nil {
 		t.Fatal("createnewaccount succeeded on a locked wallet.")
 	}
-	// dcrjson.ErrRPCWalletUnlockNeeded
+	// btcjson.ErrRPCWalletUnlockNeeded
 	if !strings.HasPrefix(err.Error(),
-		strconv.Itoa(int(dcrjson.ErrRPCWalletUnlockNeeded))) {
+		strconv.Itoa(int(btcjson.ErrRPCWalletUnlockNeeded))) {
 		t.Fatalf("createnewaccount returned error (%v) instead of %v",
-			err, dcrjson.ErrRPCWalletUnlockNeeded)
+			err, btcjson.ErrRPCWalletUnlockNeeded)
 	}
 
 	// Unlock with correct passphrase
@@ -2207,8 +2207,8 @@ func TestWalletPassphrase(t *testing.T) {
 	// Check for ErrRPCWalletAlreadyUnlocked
 	err = wcl.WalletUnlock(defaultWalletPassphrase, 0)
 	// Check for "-17: Wallet is already unlocked"
-	if err != nil && err.(*dcrjson.RPCError).Code !=
-		dcrjson.ErrRPCWalletAlreadyUnlocked {
+	if err != nil && err.(*btcjson.RPCError).Code !=
+		btcjson.ErrRPCWalletAlreadyUnlocked {
 		t.Fatalf("WalletPassphrase failed: %v", err)
 	}
 
