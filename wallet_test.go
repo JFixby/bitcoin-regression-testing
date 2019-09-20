@@ -2,11 +2,9 @@ package btcregtest
 
 import (
 	"encoding/hex"
-	"github.com/btcsuite/btcd/blockchain/stake"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/btcjson"
-	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcwallet/wallet"

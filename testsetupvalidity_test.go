@@ -2,7 +2,7 @@ package btcregtest
 
 import (
 	"fmt"
-	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcutil"
 	"testing"
 )
 
