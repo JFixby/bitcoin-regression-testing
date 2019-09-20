@@ -15,9 +15,13 @@ import (
 )
 
 func TestGetBestBlock(t *testing.T) {
+	// Skip tests when running with -short
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC harness tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 
-	_, prevbestHeight, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetBestBlock()
+	_, prevbestHeight, err := r.NodeRPCClient().GetBestBlock()
 	if err != nil {
 		t.Fatalf("Call to `getbestblock` failed: %v", err)
 	}
@@ -28,17 +32,15 @@ func TestGetBestBlock(t *testing.T) {
 		t.Fatalf("Unable to generate block: %v", err)
 	}
 
-	bestHash, bestHeight, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetBestBlock()
+	bestHash, bestHeight, err := r.NodeRPCClient().GetBestBlock()
 	if err != nil {
 		t.Fatalf("Call to `getbestblock` failed: %v", err)
 	}
 
 	// Hash should be the same as the newly submitted block.
-	b1 := bestHash[:]
-	b2 := generatedBlockHashes[0].(*chainhash.Hash)[:]
-	if !bytes.Equal(b1, b2) {
+	if !bytes.Equal(bestHash.(*chainhash.Hash)[:], generatedBlockHashes[0].(*chainhash.Hash)[:]) {
 		t.Fatalf("Block hashes do not match. Returned hash %v, wanted "+
-			"hash %v", b1, b2)
+			"hash %v", bestHash, generatedBlockHashes[0].(*chainhash.Hash)[:])
 	}
 
 	// Block height should now reflect newest height.
