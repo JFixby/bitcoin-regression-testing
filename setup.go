@@ -1,12 +1,10 @@
-// Copyright (c) 2018 The btcsuite developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
 
 package btcregtest
 
 import (
 	"fmt"
 	"github.com/jfixby/btcharness/memwallet"
+	"github.com/jfixby/btcharness"
 	"github.com/jfixby/btcharness/nodecls"
 	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
@@ -35,27 +33,27 @@ type SimpleTestSetup struct {
 
 	// Regnet25 creates a regnet test harness
 	// with 25 mature outputs.
-	Regnet25 *ChainWithMatureOutputsSpawner
+	Regnet25 *coinharness.ChainWithMatureOutputsSpawner
 
 	// Regnet5 creates a regnet test harness
 	// with 5 mature outputs.
-	Regnet5 *ChainWithMatureOutputsSpawner
+	Regnet5 *coinharness.ChainWithMatureOutputsSpawner
 
 	// Regnet1 creates a regnet test harness
 	// with 1 mature output.
-	Regnet1 *ChainWithMatureOutputsSpawner
+	Regnet1 *coinharness.ChainWithMatureOutputsSpawner
 
 	// Simnet1 creates a simnet test harness
 	// with 1 mature output.
-	Simnet1 *ChainWithMatureOutputsSpawner
+	Simnet1 *coinharness.ChainWithMatureOutputsSpawner
 
 	// Regnet0 creates a regnet test harness
 	// with only the genesis block.
-	Regnet0 *ChainWithMatureOutputsSpawner
+	Regnet0 *coinharness.ChainWithMatureOutputsSpawner
 
 	// Simnet0 creates a simnet test harness
 	// with only the genesis block.
-	Simnet0 *ChainWithMatureOutputsSpawner
+	Simnet0 *coinharness.ChainWithMatureOutputsSpawner
 
 	// ConsoleNodeFactory produces a new TestNode instance upon request
 	NodeFactory coinharness.TestNodeFactory
@@ -91,14 +89,13 @@ func Setup() *SimpleTestSetup {
 		NodeExecutablePathProvider: btcdEXE,
 	}
 
-	portManager := &LazyPortManager{
-		BasePort: 20000,
-		offset:   0,
+	portManager := &coinharness.LazyPortManager{
+		BasePort: 30000,
 	}
 
 	// Deploy harness spawner with generated
 	// test chain of 25 mature outputs
-	setup.Regnet25 = &ChainWithMatureOutputsSpawner{
+	setup.Regnet25 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -111,7 +108,7 @@ func Setup() *SimpleTestSetup {
 
 	// Deploy harness spawner with generated
 	// test chain of 5 mature outputs
-	setup.Regnet5 = &ChainWithMatureOutputsSpawner{
+	setup.Regnet5 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -122,7 +119,7 @@ func Setup() *SimpleTestSetup {
 		ActiveNet:         &chaincfg.RegressionNetParams,
 	}
 
-	setup.Regnet1 = &ChainWithMatureOutputsSpawner{
+	setup.Regnet1 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -136,7 +133,7 @@ func Setup() *SimpleTestSetup {
 		},
 	}
 
-	setup.Simnet1 = &ChainWithMatureOutputsSpawner{
+	setup.Simnet1 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -151,7 +148,7 @@ func Setup() *SimpleTestSetup {
 	}
 
 	// Deploy harness spawner with empty test chain
-	setup.Regnet0 = &ChainWithMatureOutputsSpawner{
+	setup.Regnet0 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -162,7 +159,7 @@ func Setup() *SimpleTestSetup {
 		ActiveNet:         &chaincfg.RegressionNetParams,
 	}
 	// Deploy harness spawner with empty test chain
-	setup.Simnet0 = &ChainWithMatureOutputsSpawner{
+	setup.Simnet0 = &coinharness.ChainWithMatureOutputsSpawner{
 		WorkingDir:        setup.WorkingDir.Path(),
 		DebugNodeOutput:   true,
 		DebugWalletOutput: true,
@@ -176,11 +173,6 @@ func Setup() *SimpleTestSetup {
 	setup.harnessPool = pin.NewPool(setup.Regnet25)
 
 	return setup
-}
-
-func findBTCDFolder() string {
-	path := fileops.Abs("../../../btcsuite/btcd")
-	return path
 }
 
 func setupWorkingDir() string {
