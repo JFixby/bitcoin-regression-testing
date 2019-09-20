@@ -61,7 +61,7 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	txHash, err := r.NodeRPCClient().SendRawTransaction(fundTx.(*wire.MsgTx), true)
+	txHash, err := r.NodeRPCClient().SendRawTransaction(fundTx, true)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -72,20 +72,20 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	assertTxInBlock(r, t, blockHash[0], txHash)
+	assertTxInBlock(r, t, blockHash[0].(*chainhash.Hash), txHash.(*chainhash.Hash))
 
 	// Locate the output index of the coins spendable by the key we
 	// generated above, this is needed in order to create a proper utxo for
 	// this output.
 	var outputIndex uint32
-	if bytes.Equal(fundTx.(*wire.MsgTx).TxOut[0].PkScript, selfAddrScript) {
+	if bytes.Equal(fundTx.TxOut()[0].PkScript(), selfAddrScript) {
 		outputIndex = 0
 	} else {
 		outputIndex = 1
 	}
 
 	utxo := &wire.OutPoint{
-		Hash:  fundTx.(*wire.MsgTx).TxHash(),
+		Hash:  fundTx.TxHash().(chainhash.Hash),
 		Index: outputIndex,
 	}
 
@@ -163,7 +163,7 @@ func TestBIP0113Activation(t *testing.T) {
 	// This transaction should be rejected from the mempool as using MTP
 	// for transactions finality is now a policy rule. Additionally, the
 	// exact error should be the rejection of a non-final transaction.
-	_, err = r.NodeRPCClient().SendRawTransaction(tx, true)
+	_, err = r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{tx}, true)
 	if err == nil {
 		t.Fatalf("transaction accepted, but should be non-final")
 	} else if !strings.Contains(err.Error(), "not finalized") {
@@ -261,7 +261,7 @@ func TestBIP0113Activation(t *testing.T) {
 		// accepted as it has a lock-time of one
 		// second _before_ the current MTP.
 
-		_, err = r.NodeRPCClient().SendRawTransaction(tx, true)
+		_, err = r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{tx}, true)
 		if err == nil && timeLockDelta >= 0 {
 			t.Fatal("transaction was accepted into the mempool " +
 				"but should be rejected!")
@@ -340,16 +340,16 @@ func createCSVOutput(r *coinharness.Harness, t *testing.T,
 	}
 
 	var outputIndex uint32
-	if !bytes.Equal(tx.(*wire.MsgTx).TxOut[0].PkScript, p2shScript) {
+	if !bytes.Equal(tx.TxOut()[0].PkScript(), p2shScript) {
 		outputIndex = 1
 	}
 
 	utxo := &wire.OutPoint{
-		Hash:  tx.(*wire.MsgTx).TxHash(),
+		Hash:  tx.TxHash().(chainhash.Hash),
 		Index: outputIndex,
 	}
 
-	return csvScript, utxo, tx.(*wire.MsgTx), nil
+	return csvScript, utxo, btcharness.TransactionTxToRaw(tx), nil
 }
 
 // spendCSVOutput spends an output previously created by the createCSVOutput
@@ -384,10 +384,11 @@ func spendCSVOutput(redeemScript []byte, csvUTXO *wire.OutPoint,
 func assertTxInBlock(r *coinharness.Harness, t *testing.T, blockHash *chainhash.Hash,
 	txid *chainhash.Hash) {
 
-	block, err := r.NodeRPCClient().GetBlock(blockHash)
+	b, err := r.NodeRPCClient().GetBlock(blockHash)
 	if err != nil {
 		t.Fatalf("unable to get block: %v", err)
 	}
+	block := b.(*wire.MsgBlock)
 	if len(block.Transactions) < 2 {
 		t.Fatal("target transaction was not mined")
 	}
@@ -459,7 +460,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 
 		// As the transaction is p2sh it should be accepted into the
 		// mempool and found within the next generated block.
-		if _, err := r.NodeRPCClient().SendRawTransaction(tx, true); err != nil {
+		if _, err := r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{tx}, true); err != nil {
 			t.Fatalf("unable to broadcast tx: %v", err)
 		}
 		blocks, err := r.NodeRPCClient().Generate(1)
@@ -467,7 +468,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 			t.Fatalf("unable to generate blocks: %v", err)
 		}
 		txid := tx.TxHash()
-		assertTxInBlock(r, t, blocks[0], &txid)
+		assertTxInBlock(r, t, blocks[0].(*chainhash.Hash), &txid)
 
 		// Generate a custom transaction which spends the CSV output.
 		sequenceNum := blockchain.LockTimeToSequence(false, 10)
@@ -479,7 +480,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 
 		// This transaction should be rejected from the mempool since
 		// CSV validation is already mempool policy pre-fork.
-		_, err = r.NodeRPCClient().SendRawTransaction(spendingTx, true)
+		_, err = r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{spendingTx}, true)
 		if err == nil {
 			t.Fatalf("transaction should have been rejected, but was " +
 				"instead accepted")
@@ -548,7 +549,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 			t.Fatalf("unable to create CSV output: %v", err)
 		}
 
-		if _, err := r.NodeRPCClient().SendRawTransaction(tx, true); err != nil {
+		if _, err := r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{tx}, true); err != nil {
 			t.Fatalf("unable to broadcast transaction: %v", err)
 		}
 
@@ -570,10 +571,11 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to get prior block hash: %v", err)
 	}
-	prevBlock, err := r.NodeRPCClient().GetBlock(prevBlockHash)
+	b, err := r.NodeRPCClient().GetBlock(prevBlockHash)
 	if err != nil {
 		t.Fatalf("unable to get block: %v", err)
 	}
+	prevBlock := b.(*wire.MsgBlock)
 	for i := 0; i < relativeBlockLock; i++ {
 		timeStamp := prevBlock.Header.Timestamp.Add(time.Minute * 10)
 		args := btcharness.GenerateBlockArgs{
@@ -676,7 +678,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		txid, err := r.NodeRPCClient().SendRawTransaction(test.tx, true)
+		txid, err := r.NodeRPCClient().SendRawTransaction(&btcharness.CreatedTransactionTx{test.tx}, true)
 		switch {
 		// Test case passes, nothing further to report.
 		case test.accept && err == nil:
@@ -721,6 +723,6 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unable to mine block: %v", err)
 		}
-		assertTxInBlock(r, t, blockHashes[0].(*chainhash.Hash), txid)
+		assertTxInBlock(r, t, blockHashes[0].(*chainhash.Hash), txid.(*chainhash.Hash))
 	}
 }
