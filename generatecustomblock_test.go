@@ -90,7 +90,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			PkScript: []byte{},
 		}},
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network:       r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs2)
 	if err != nil {

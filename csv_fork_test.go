@@ -37,7 +37,7 @@ func makeTestOutput(r *coinharness.Harness, t *testing.T,
 
 	// Using the key created above, generate a pkScript which it's able to
 	// spend.
-	a, err := btcutil.NewAddressPubKey(key.PubKey().SerializeCompressed(), r.Node.Network().(*chaincfg.Params))
+	a, err := btcutil.NewAddressPubKey(key.PubKey().SerializeCompressed(), r.Node.Network().Params().(*chaincfg.Params))
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -176,7 +176,7 @@ func TestBIP0113Activation(t *testing.T) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -200,7 +200,7 @@ func TestBIP0113Activation(t *testing.T) {
 	// the genesis target period, so we mine 196 blocks. This'll put us at
 	// height 299. The getblockchaininfo call checks the state for the
 	// block AFTER the current height.
-	numBlocks := (r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow * 2) - 4
+	numBlocks := (r.Node.Network().Params().(*chaincfg.Params).MinerConfirmationWindow * 2) - 4
 	if _, err := r.NodeRPCClient().Generate(numBlocks); err != nil {
 		t.Fatalf("unable to generate blocks: %v", err)
 	}
@@ -273,7 +273,7 @@ func TestBIP0113Activation(t *testing.T) {
 				BlockVersion:  vbLegacyBlockVersion,
 				BlockTime:     time.Time{},
 				MiningAddress: r.MiningAddress.(btcutil.Address),
-				Network:       r.Node.Network().(*chaincfg.Params),
+				Network:       r.Node.Network().Params().(*chaincfg.Params),
 			}
 			_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 			if err == nil && timeLockDelta >= 0 {
@@ -310,7 +310,7 @@ func createCSVOutput(r *coinharness.Harness, t *testing.T,
 
 	// Using the script generated above, create a P2SH output which will be
 	// accepted into the mempool.
-	p2shAddr, err := btcutil.NewAddressScriptHash(csvScript, r.Node.Network().(*chaincfg.Params))
+	p2shAddr, err := btcutil.NewAddressScriptHash(csvScript, r.Node.Network().Params().(*chaincfg.Params))
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -492,7 +492,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -510,7 +510,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 	// genesis target period, so we mine 192 blocks. This'll put us at
 	// height 299. The getblockchaininfo call checks the state for the
 	// block AFTER the current height.
-	numBlocks := (r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow * 2) - 8
+	numBlocks := (r.Node.Network().Params().(*chaincfg.Params).MinerConfirmationWindow * 2) - 8
 	if _, err := r.NodeRPCClient().Generate(numBlocks); err != nil {
 		t.Fatalf("unable to generate blocks: %v", err)
 	}
@@ -578,7 +578,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     timeStamp,
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		b, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -703,7 +703,7 @@ func TestBIP0068AndBIP0112Activation(t *testing.T) {
 				BlockVersion:  vbLegacyBlockVersion,
 				BlockTime:     time.Time{},
 				MiningAddress: r.MiningAddress.(btcutil.Address),
-				Network:       r.Node.Network().(*chaincfg.Params),
+				Network:       r.Node.Network().Params().(*chaincfg.Params),
 			}
 			_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 			if err == nil {

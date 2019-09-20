@@ -150,13 +150,13 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	//
 	// Assert the chain height is the expected value and soft fork status is
 	// still defined and did NOT move to started.
-	confirmationWindow := r.Node.Network().(*chaincfg.Params).MinerConfirmationWindow
+	confirmationWindow := r.Node.Network().Params().(*chaincfg.Params).MinerConfirmationWindow
 	for i := uint32(0); i < confirmationWindow-2; i++ {
 		args := &btcharness.GenerateBlockArgs{
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), args)
 		if err != nil {
@@ -176,7 +176,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 		BlockVersion:  vbLegacyBlockVersion,
 		BlockTime:     time.Time{},
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network:       r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().Params().(*chaincfg.Params),
 	}
 	_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 	if err != nil {
@@ -194,18 +194,18 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 	// Assert the chain height is the expected value and the soft fork
 	// status is still started and did NOT move to locked in.
 	net := r.Node.Network()
-	if deploymentID > uint32(len(net.(*chaincfg.Params).Deployments)) {
+	if deploymentID > uint32(len(net.Params().(*chaincfg.Params).Deployments)) {
 		t.Fatalf("deployment ID %d does not exist", deploymentID)
 	}
-	deployment := &net.(*chaincfg.Params).Deployments[deploymentID]
-	activationThreshold := net.(*chaincfg.Params).RuleChangeActivationThreshold
+	deployment := &net.Params().(*chaincfg.Params).Deployments[deploymentID]
+	activationThreshold := net.Params().(*chaincfg.Params).RuleChangeActivationThreshold
 	signalForkVersion := int32(1<<deployment.BitNumber) | vbTopBits
 	for i := uint32(0); i < activationThreshold-1; i++ {
 		args := btcharness.GenerateBlockArgs{
 			BlockVersion:  signalForkVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -217,7 +217,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -240,7 +240,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 			BlockVersion:  signalForkVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -252,7 +252,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -275,7 +275,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -297,7 +297,7 @@ func testBIP0009(t *testing.T, forkKey string, deploymentID uint32) {
 			BlockVersion:  vbLegacyBlockVersion,
 			BlockTime:     time.Time{},
 			MiningAddress: r.MiningAddress.(btcutil.Address),
-			Network:       r.Node.Network().(*chaincfg.Params),
+			Network:       r.Node.Network().Params().(*chaincfg.Params),
 		}
 		_, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &args)
 		if err != nil {
@@ -368,7 +368,7 @@ func TestBIP0009Mining(t *testing.T) {
 	// the test dummy bit set in the version since the first window is
 	// in the defined threshold state.
 	net := r.Node.Network()
-	deployment := &net.(*chaincfg.Params).Deployments[chaincfg.DeploymentTestDummy]
+	deployment := &net.Params().(*chaincfg.Params).Deployments[chaincfg.DeploymentTestDummy]
 	testDummyBitNum := deployment.BitNumber
 	hashes, err := r.NodeRPCClient().Generate(1)
 	if err != nil {
@@ -387,7 +387,7 @@ func TestBIP0009Mining(t *testing.T) {
 	// The last generated block should now have the test bit set in the
 	// version since the btcd mining code will have recognized the test
 	// dummy deployment as started.
-	confirmationWindow := net.(*chaincfg.Params).MinerConfirmationWindow
+	confirmationWindow := net.Params().(*chaincfg.Params).MinerConfirmationWindow
 	numNeeded := confirmationWindow - 1
 	hashes, err = r.NodeRPCClient().Generate(numNeeded)
 	if err != nil {

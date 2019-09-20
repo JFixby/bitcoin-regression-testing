@@ -17,8 +17,8 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
-github.com/jfixby/btcharness v0.0.0-20190920190849-4091de05645e h1:NmXOhBaVscUTDsgsSOSYriX9yX3qaphDXqx1s9WDYfk=
-github.com/jfixby/btcharness v0.0.0-20190920190849-4091de05645e/go.mod h1:555uTDfqzdJBHjT9HOUmacdo0p+AtQs+m9Z0x8KSgBA=
+github.com/jfixby/btcharness v0.0.0-20190920192707-92413670fe6e h1:WyYAnXfKzTyI0AUI7xeSP/5XqCwGpGiFKsVrOzIsdOg=
+github.com/jfixby/btcharness v0.0.0-20190920192707-92413670fe6e/go.mod h1:555uTDfqzdJBHjT9HOUmacdo0p+AtQs+m9Z0x8KSgBA=
 github.com/jfixby/coinharness v0.0.0-20190920190709-7691bee9eb85 h1:0y1/Rb0zNeFL0QUUM1qIowTbTMT8d0OEzCEsvdfHpRc=
 github.com/jfixby/coinharness v0.0.0-20190920190709-7691bee9eb85/go.mod h1:d/brli3srPhkdmg/3B9ZnaxEj6SgbZbGj27eapvPwOY=
 github.com/jfixby/pin v0.0.0-20190810181909-8c18ae7f9c3c h1:VVO+vlTdgPlkrNzgImAywNR/STScjb/MwiTLRd/R/vc=
