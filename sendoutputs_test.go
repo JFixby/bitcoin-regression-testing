@@ -54,7 +54,7 @@ func TestSendOutputs(t *testing.T) {
 		}
 		output := wire.NewTxOut(int64(amt), addrScript)
 		sendArgs := &coinharness.SendOutputsArgs{
-			Outputs: []coinharness.OutputTx{output},
+			Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 			FeeRate: 10,
 		}
 		txid, err := r.Wallet.SendOutputs(sendArgs)

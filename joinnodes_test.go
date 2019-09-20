@@ -7,6 +7,7 @@ package btcregtest
 import (
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcutil"
+	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"testing"
 	"time"
@@ -108,7 +109,7 @@ func checkJoinMempools(t *testing.T) {
 	}
 	output := wire.NewTxOut(5e8, addrScript)
 	ctargs := &coinharness.CreateTransactionArgs{
-		Outputs: []coinharness.OutputTx{output},
+		Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 		FeeRate: 10,
 		Change:  true,
 	}

@@ -42,7 +42,7 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
 		ctargs := &coinharness.CreateTransactionArgs{
-			Outputs: []coinharness.OutputTx{output},
+			Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 			FeeRate: 10,
 			Change:  true,
 		}
@@ -51,18 +51,18 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 			t.Fatalf("unable to create tx: %v", err)
 		}
 
-		txns = append(txns, btcutil.NewTx(tx.(*wire.MsgTx)))
+		txns = append(txns, btcutil.NewTx(btcharness.TransactionTxToRaw(tx)))
 	}
 
 	// Now generate a block with the default block version, and a zero'd
 	// out time.
 
 	newBlockArgs := btcharness.GenerateBlockArgs{
-		Txns:         txns,
-		BlockVersion: BlockVersion,
-		BlockTime:    time.Time{},
+		Txns:          txns,
+		BlockVersion:  BlockVersion,
+		BlockTime:     time.Time{},
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network: r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().(*chaincfg.Params),
 	}
 	block, err := btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs)
 	if err != nil {
@@ -88,10 +88,10 @@ func TestGenerateAndSubmitBlock(t *testing.T) {
 	targetBlockVersion := int32(1337)
 
 	newBlockArgs2 := btcharness.GenerateBlockArgs{
-		BlockVersion: targetBlockVersion,
-		BlockTime:    timestamp,
+		BlockVersion:  targetBlockVersion,
+		BlockTime:     timestamp,
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network: r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().(*chaincfg.Params),
 	}
 	block, err = btcharness.GenerateAndSubmitBlock(r.NodeRPCClient(), &newBlockArgs2)
 	if err != nil {

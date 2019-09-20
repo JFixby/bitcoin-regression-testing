@@ -6,7 +6,6 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"testing"
@@ -39,7 +38,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 	txns := make([]*btcutil.Tx, 0, numTxns)
 	for i := 0; i < numTxns; i++ {
 		ctargs := &coinharness.CreateTransactionArgs{
-			Outputs: []coinharness.OutputTx{output},
+			Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 			FeeRate: 10,
 			Change:  true,
 		}
@@ -48,7 +47,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			t.Fatalf("unable to create tx: %v", err)
 		}
 
-		txns = append(txns, btcutil.NewTx(tx.(*wire.MsgTx)))
+		txns = append(txns, btcutil.NewTx(btcharness.TransactionTxToRaw(tx)))
 	}
 
 	// Now generate a block with the default block version, a zero'd out
@@ -62,7 +61,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			PkScript: []byte{},
 		}},
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network: r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().(*chaincfg.Params),
 	}
 	block, err := btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs)
 	if err != nil {
@@ -95,7 +94,7 @@ func TestGenerateAndSubmitBlockWithCustomCoinbaseOutputs(t *testing.T) {
 			PkScript: []byte{},
 		}},
 		MiningAddress: r.MiningAddress.(btcutil.Address),
-		Network: r.Node.Network().(*chaincfg.Params),
+		Network:       r.Node.Network().(*chaincfg.Params),
 	}
 	block, err = btcharness.GenerateAndSubmitBlockWithCustomCoinbaseOutputs(r.NodeRPCClient(), &newBlockArgs2)
 	if err != nil {

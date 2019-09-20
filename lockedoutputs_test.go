@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcutil"
+	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"testing"
 
@@ -34,7 +35,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 	outputAmt := btcutil.Amount(50 * btcutil.SatoshiPerBitcoin)
 	output := wire.NewTxOut(int64(outputAmt), pkScript)
 	ctargs := &coinharness.CreateTransactionArgs{
-		Outputs: []coinharness.OutputTx{output},
+		Outputs: []coinharness.OutputTx{&btcharness.OutputTx{output}},
 		FeeRate: 10,
 		Change:  true,
 	}

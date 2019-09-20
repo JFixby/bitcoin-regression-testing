@@ -10,7 +10,6 @@ import (
 	"github.com/jfixby/pin"
 	"os"
 	"testing"
-
 )
 
 // ObtainHarness manages access to the Pool for test cases

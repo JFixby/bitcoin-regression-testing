@@ -7,7 +7,6 @@ package btcregtest
 import (
 	"github.com/jfixby/coinharness"
 	"testing"
-
 )
 
 func TestConnectNode(t *testing.T) {
