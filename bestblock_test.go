@@ -6,7 +6,7 @@ package btcregtest
 
 import (
 	"bytes"
-	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"testing"
 )
 
@@ -17,26 +17,26 @@ func TestGetBestBlock(t *testing.T) {
 	//}
 	r := ObtainHarness(mainHarnessName)
 
-	_, prevbestHeight, err := r.NodeRPCClient().(*rpcclient.Client).GetBestBlock()
+	_, prevbestHeight, err := r.NodeRPCClient().GetBestBlock()
 	if err != nil {
 		t.Fatalf("Call to `getbestblock` failed: %v", err)
 	}
 
 	// Create a new block connecting to the current tip.
-	generatedBlockHashes, err := r.NodeRPCClient().(*rpcclient.Client).Generate(1)
+	generatedBlockHashes, err := r.NodeRPCClient().Generate(1)
 	if err != nil {
 		t.Fatalf("Unable to generate block: %v", err)
 	}
 
-	bestHash, bestHeight, err := r.NodeRPCClient().(*rpcclient.Client).GetBestBlock()
+	bestHash, bestHeight, err := r.NodeRPCClient().GetBestBlock()
 	if err != nil {
 		t.Fatalf("Call to `getbestblock` failed: %v", err)
 	}
 
 	// Hash should be the same as the newly submitted block.
-	if !bytes.Equal(bestHash[:], generatedBlockHashes[0][:]) {
+	if !bytes.Equal(bestHash.(*chainhash.Hash)[:], generatedBlockHashes[0].(*chainhash.Hash)[:]) {
 		t.Fatalf("Block hashes do not match. Returned hash %v, wanted "+
-			"hash %v", bestHash, generatedBlockHashes[0][:])
+			"hash %v", bestHash, generatedBlockHashes[0].(*chainhash.Hash)[:])
 	}
 
 	// Block height should now reflect newest height.
