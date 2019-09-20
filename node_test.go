@@ -49,9 +49,13 @@ func TestGetBestBlock(t *testing.T) {
 }
 
 func TestGetBlockCount(t *testing.T) {
+	// Skip tests when running with -short
+	//if testing.Short() {
+	//	t.Skip("Skipping RPC harness tests in short mode")
+	//}
 	r := ObtainHarness(mainHarnessName)
 	// Save the current count.
-	currentCount, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetBlockCount()
+	currentCount, err := r.NodeRPCClient().GetBlockCount()
 	if err != nil {
 		t.Fatalf("Unable to get block count: %v", err)
 	}
@@ -61,7 +65,7 @@ func TestGetBlockCount(t *testing.T) {
 	}
 
 	// Count should have increased by one.
-	newCount, err := r.NodeRPCClient().Internal().(*rpcclient.Client).GetBlockCount()
+	newCount, err := r.NodeRPCClient().GetBlockCount()
 	if err != nil {
 		t.Fatalf("Unable to get block count: %v", err)
 	}
