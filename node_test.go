@@ -366,9 +366,13 @@ func TestMemWalletReorg(t *testing.T) {
 	defer testSetup.Regnet5.Dispose(h)
 	h.Wallet.Sync(testSetup.Regnet5.NumMatureOutputs)
 
-	expectedBalance := btcutil.Amount(1200 * btcutil.AtomsPerCoin)
-	walletBalance := coinharness.GetBalance(t, h.Wallet).TotalSpendable.(btcutil.Amount)
-	if expectedBalance != walletBalance {
+	// The internal wallet of this h should now have 250 BTC.
+	expectedBalance := btcutil.Amount(250 * btcutil.SatoshiPerBitcoin)
+	walletBalance, err := r.Wallet.GetBalance("")
+	if err != nil {
+		t.Fatalf("unable to get balance: %v", err)
+	}
+	if expectedBalance != walletBalance.TotalSpendable {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)
 	}
@@ -387,8 +391,11 @@ func TestMemWalletReorg(t *testing.T) {
 	// chain should have been decimated in favor of the main h'
 	// chain.
 	expectedBalance = btcutil.Amount(0)
-	walletBalance = coinharness.GetBalance(t, h.Wallet).TotalSpendable.(btcutil.Amount)
-	if expectedBalance != walletBalance {
+	walletBalance, err = r.Wallet.GetBalance("")
+	if err != nil {
+		t.Fatalf("unable to get balance: %v", err)
+	}
+	if expectedBalance != walletBalance.TotalSpendable {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)
 	}
