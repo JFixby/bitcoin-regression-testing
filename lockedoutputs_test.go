@@ -55,7 +55,7 @@ func TestMemWalletLockedOutputs(t *testing.T) {
 	// Now unlocked all the spent inputs within the unbroadcast signed
 	// transaction. The current balance should now be exactly that of the
 	// starting balance.
-	txin := tx.(*wire.MsgTx).TxIn
+	txin := tx.TxIn()
 	inpts := make([]coinharness.InputTx, len(txin))
 	for i, j := range txin {
 		inpts[i] = j
