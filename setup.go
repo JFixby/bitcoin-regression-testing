@@ -3,18 +3,17 @@ package btcregtest
 import (
 	"fmt"
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/jfixby/coinharness"
 	"github.com/jfixby/btcharness"
 	"github.com/jfixby/btcharness/memwallet"
 	"github.com/jfixby/btcharness/nodecls"
 	"github.com/jfixby/btcharness/walletcls"
+	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/commandline"
 	"github.com/jfixby/pin/gobuilder"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
 )
 
 // Default harness name
