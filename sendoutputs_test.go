@@ -6,6 +6,7 @@ package btcregtest
 
 import (
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/jfixby/btcharness"
 	"github.com/jfixby/coinharness"
 	"testing"
 
@@ -24,9 +25,12 @@ func TestBallance(t *testing.T) {
 
 	expectedBalance := btcutil.Amount(
 		int64(testSetup.Regnet25.NumMatureOutputs) * 50 * btcutil.SatoshiPerBitcoin)
-	actualBalance := r.Wallet.GetBalance()
+	actualBalance, err := r.Wallet.GetBalance("")
+	if err != nil {
+		t.Fatalf("unable to get balance: %v", err)
+	}
 
-	if actualBalance != expectedBalance {
+	if actualBalance.TotalSpendable != expectedBalance {
 		t.Fatalf("expected wallet balance of %v instead have %v",
 			expectedBalance, actualBalance)
 	}

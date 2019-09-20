@@ -26,8 +26,11 @@ func TestMemWalletReorg(t *testing.T) {
 
 	// The internal wallet of this h should now have 250 BTC.
 	expectedBalance := btcutil.Amount(250 * btcutil.SatoshiPerBitcoin)
-	walletBalance := h.Wallet.GetBalance()
-	if expectedBalance != walletBalance {
+	walletBalance, err := r.Wallet.GetBalance("")
+	if err != nil {
+		t.Fatalf("unable to get balance: %v", err)
+	}
+	if expectedBalance != walletBalance.TotalSpendable {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)
 	}
@@ -46,8 +49,11 @@ func TestMemWalletReorg(t *testing.T) {
 	// chain should have been decimated in favor of the main h'
 	// chain.
 	expectedBalance = btcutil.Amount(0)
-	walletBalance = h.Wallet.GetBalance()
-	if expectedBalance != walletBalance {
+	walletBalance, err = r.Wallet.GetBalance("")
+	if err != nil {
+		t.Fatalf("unable to get balance: %v", err)
+	}
+	if expectedBalance != walletBalance.TotalSpendable {
 		t.Fatalf("wallet balance incorrect: expected %v, got %v",
 			expectedBalance, walletBalance)
 	}
