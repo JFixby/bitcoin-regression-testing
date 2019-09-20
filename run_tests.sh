@@ -11,7 +11,6 @@ testrepo () {
   PROJECT=btcsuite
   NODE_REPO=btcd
   WALLET_REPO=btcwallet
-  GO111MODULE=on
 
   $GO version
 
@@ -21,7 +20,7 @@ testrepo () {
   # run tests on all modules
 
   pushd ../../
-  git clone --depth=50 --branch=master https://github.com/${PROJECT}/${NODE_REPO}.git ${PROJECT}/${NODE_REPO}
+  git clone --depth=50 --branch=bug_fix https://github.com/jfixby/dcrd.git ${PROJECT}/${NODE_REPO}
   git clone --depth=50 --branch=master https://github.com/${PROJECT}/${WALLET_REPO}.git ${PROJECT}/${WALLET_REPO}
   popd
 
@@ -38,6 +37,7 @@ testrepo () {
   $GO install -v . ./cmd/...
   popd
 
+  GO111MODULE=on
   ${NODE_REPO} --version
   ${WALLET_REPO} --version
   $GO clean -testcache
