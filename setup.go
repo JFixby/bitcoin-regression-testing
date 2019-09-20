@@ -1,15 +1,13 @@
-
 package btcregtest
 
 import (
 	"fmt"
-	"github.com/jfixby/btcharness/memwallet"
 	"github.com/jfixby/btcharness"
+	"github.com/jfixby/btcharness/memwallet"
 	"github.com/jfixby/btcharness/nodecls"
 	"github.com/jfixby/coinharness"
 	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/commandline"
-	"github.com/jfixby/pin/fileops"
 	"github.com/jfixby/pin/gobuilder"
 	"io/ioutil"
 	"os"
@@ -78,8 +76,7 @@ func (setup *SimpleTestSetup) TearDown() {
 func Setup() *SimpleTestSetup {
 	setup := &SimpleTestSetup{
 		WalletFactory: &memwallet.WalletFactory{},
-		//Network:       &chaincfg.RegressionNetParams,
-		WorkingDir: pin.NewTempDir(setupWorkingDir(), "simpleregtest").MakeDir(),
+		WorkingDir:    pin.NewTempDir(setupWorkingDir(), "simpleregtest").MakeDir(),
 	}
 
 	btcdEXE := &commandline.ExplicitExecutablePathString{
@@ -93,6 +90,8 @@ func Setup() *SimpleTestSetup {
 		BasePort: 30000,
 	}
 
+	testSeed := btcharness.NewTestSeed
+
 	// Deploy harness spawner with generated
 	// test chain of 25 mature outputs
 	setup.Regnet25 = &coinharness.ChainWithMatureOutputsSpawner{
@@ -103,7 +102,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.RegressionNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 	}
 
 	// Deploy harness spawner with generated
@@ -116,7 +117,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.RegressionNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 	}
 
 	setup.Regnet1 = &coinharness.ChainWithMatureOutputsSpawner{
@@ -127,7 +130,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.RegressionNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 		NodeStartExtraArguments: map[string]interface{}{
 			"rejectnonstd": commandline.NoArgumentValue,
 		},
@@ -141,7 +146,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.SimNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.SimNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 		NodeStartExtraArguments: map[string]interface{}{
 			"rejectnonstd": commandline.NoArgumentValue,
 		},
@@ -156,7 +163,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.RegressionNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.RegressionNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 	}
 	// Deploy harness spawner with empty test chain
 	setup.Simnet0 = &coinharness.ChainWithMatureOutputsSpawner{
@@ -167,7 +176,9 @@ func Setup() *SimpleTestSetup {
 		NetPortManager:    portManager,
 		WalletFactory:     setup.WalletFactory,
 		NodeFactory:       setup.NodeFactory,
-		ActiveNet:         &chaincfg.SimNetParams,
+		ActiveNet:         &btcharness.Network{&chaincfg.SimNetParams},
+		CreateTempWallet:  true,
+		NewTestSeed:       testSeed,
 	}
 
 	setup.harnessPool = pin.NewPool(setup.Regnet25)
